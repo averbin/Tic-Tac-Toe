@@ -5,12 +5,17 @@
 -----------------------------------------------------------------------------------------
 local Board = {{},{},{}}
 local BoardElement = {}
+local elementsGroup = display.newGroup()
+local itemsGroup = display.newGroup()
+local items = {}
 mt = { element, mark}
 local turn = "x" -- could be "x" or "o"
 local exitButton = display.newRect(display.contentWidth - 50, 20, 30, 30)
 exitButton:setFillColor(1.0, 0.0, 0.0)
 function ExitTapEvent( event )
-  os.exit()
+  EndCleanAll()
+  turn = "x"
+  --os.exit()
 end
 exitButton:addEventListener("tap", ExitTapEvent)
 
@@ -26,20 +31,54 @@ function FindElement(name)
 end
 
 function DrawCircle(xPos, yPos)
-  local circle = display.newCircle( xPos, yPos, 20 )
+  local circle = display.newCircle(itemsGroup, xPos, yPos, 20 )
   circle:setFillColor( 0.2 )
   circle.strokeWidth = 2
   circle:setStrokeColor( 1, 1, 1 )
-  return circle
+  table.insert(items, circle)
 end
 
 function DrawLines(xPos, yPos)
   --xLines = {{},{}}
   local range = 20
-  firstLine = display.newLine(xPos - range, yPos - range, xPos + range, yPos + range)
+  local firstLine = display.newLine(itemsGroup, xPos - range, yPos - range, xPos + range, yPos + range)
   firstLine.strokeWidth = 2
-  secondLine = display.newLine(xPos + range, yPos - range, xPos - range, yPos + range)
+  local secondLine = display.newLine(itemsGroup, xPos + range, yPos - range, xPos - range, yPos + range)
   secondLine.strokeWidth = 2
+  table.insert(items, firstLine)
+  table.insert(items, secondLine)
+end
+
+function EndCleanAll()
+  RemoveAllItems()
+  for i, v in pairs( Board ) do
+    for j , value in pairs(v) do
+      value.mark = ""
+    end
+  end
+end
+
+function RemoveAllItems()
+  for i = #items, 1, -1 do
+    object = items[i]
+    display.remove(object)
+    table.remove( items, i )
+  end
+end
+
+function IsAllMarksSet()
+  local count = 0
+  for i, v in pairs( Board ) do
+    for j , value in pairs(v) do
+      if value.mark ~= "" then
+        count = count + 1
+      end
+    end
+  end
+  if count == 9 then
+    return true
+  end
+  return false
 end
 
 function tapEvent( event )
@@ -61,6 +100,7 @@ function tapEvent( event )
   else
     print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
   end
+
   --newRect = display.newRect(event.target, event.target.x, event.target.y, 10,10)
   return true
 end
@@ -69,7 +109,7 @@ function BoardElement.new(xpos, ypos, size, name)
   set = {}
   setmetatable(set, mt)
   set.mark = ""
-  set.element = display.newRect(xpos, ypos, size, size);
+  set.element = display.newRect(elementsGroup, xpos, ypos, size, size);
   set.element:setFillColor(0.2)
   set.element:addEventListener("tap", tapEvent)
   set.element.name = name
