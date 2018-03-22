@@ -30,6 +30,27 @@ function FindElement(name)
   end
 end
 
+function FindByHorizontal()
+  local counterForX = 0
+  local counterForO = 0
+  for i, v in pairs( Board ) do
+    for j , value in pairs(v) do
+      if value.mark == "x" then
+        counterForX = counterForX + 1
+        if counterForX == 3 then
+          return "x", i -- x win.
+        end
+      elseif value.mark == "o" then
+        counterForO = counterForO + 1
+        if counterForO == 3 then
+          return "o", i -- y vin.
+        end
+      end
+    end
+  end
+  return "", 0
+end
+
 function DrawCircle(xPos, yPos)
   local circle = display.newCircle(itemsGroup, xPos, yPos, 20 )
   circle:setFillColor( 0.2 )
@@ -101,6 +122,11 @@ function tapEvent( event )
     print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
   end
 
+  local markWin , row = FindByHorizontal()
+  if markWin ~= "" then
+    --TODO : show who win and drow the line.
+    print("row win: " .. row, "Mark: " .. markWin)
+  end
   --newRect = display.newRect(event.target, event.target.x, event.target.y, 10,10)
   return true
 end
