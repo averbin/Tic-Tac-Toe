@@ -30,10 +30,34 @@ function FindElement(name)
   end
 end
 
+function FindByVertical()
+  local columnCounter = #Board[1]
+  for column = 1, columnCounter do
+    local counterForX = 0
+    local counterForO = 0
+    for row = 1, #Board[column] do
+      boardElement = Board[row][column]
+      if boardElement.mark == "x" then
+        counterForX = counterForX + 1
+        if counterForX == #Board then
+          return "x", column
+        end
+      elseif boardElement.mark == "o" then
+        counterForO = counterForO + 1
+        if counterForO == #Board then
+          return "o", column
+        end
+      end
+    end
+  end
+
+  return "", 0
+end
+
 function FindByHorizontal()
-  local counterForX = 0
-  local counterForO = 0
   for i, v in pairs( Board ) do
+    local counterForX = 0
+    local counterForO = 0
     for j , value in pairs(v) do
       if value.mark == "x" then
         counterForX = counterForX + 1
@@ -43,7 +67,7 @@ function FindByHorizontal()
       elseif value.mark == "o" then
         counterForO = counterForO + 1
         if counterForO == 3 then
-          return "o", i -- y vin.
+          return "o", i -- y win.
         end
       end
     end
@@ -122,12 +146,17 @@ function tapEvent( event )
     print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
   end
 
-  local markWin , row = FindByHorizontal()
-  if markWin ~= "" then
+  local markWinRow , row = FindByHorizontal()
+  if markWinRow ~= "" then
     --TODO : show who win and drow the line.
-    print("row win: " .. row, "Mark: " .. markWin)
+    print("row win: " .. row, "Mark: " .. markWinRow)
   end
-  --newRect = display.newRect(event.target, event.target.x, event.target.y, 10,10)
+
+  local markWinColumn , column = FindByVertical()
+  if markWinColumn ~= "" then
+    --TODO : show who win and drow the line.
+    print("column win: " .. column, "Mark: " .. markWinColumn)
+  end
   return true
 end
 
