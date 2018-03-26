@@ -75,6 +75,48 @@ function FindByHorizontal()
   return "", 0
 end
 
+function FindLeftTop()
+  local counterForX = 0
+  local counterForO = 0
+  for i = 1 , #Board do
+    if(Board[i][i].mark == "x") then
+      counterForX = counterForX + 1
+      if counterForX == #Board then
+        return "x" , i
+      end
+    elseif(Board[i][i].mark == "o") then
+      counterForO = counterForO + 1
+      if counterForO == #Board then
+        return "o" , i
+      end
+    end
+  end
+  return "", 0
+end
+
+function FindRightTop()
+  local counterForX = 0
+  local counterForO = 0
+  local row = 1
+  for column = #Board , 1, -1 do
+    print("position: " .. row .. " : " .. column)
+    if(Board[row][column].mark == "x") then
+      counterForX = counterForX + 1
+      if(counterForX == #Board) then
+        return "x", row
+      end
+    elseif(Board[row][column].mark == "o") then
+      counterForO = counterForO + 1
+      if(counterForO == #Board) then
+        return "o", row
+      end
+    end
+    row = row + 1
+  end
+
+  return "", 0
+end
+
 function DrawCircle(xPos, yPos)
   local circle = display.newCircle(itemsGroup, xPos, yPos, 20 )
   circle:setFillColor( 0.2 )
@@ -131,7 +173,6 @@ function tapEvent( event )
   print("pos: " .. event.target.x .. "\ty: " .. event.target.y)
   boardElement = FindElement(event.target.name)
   if boardElement.mark == "" then
-
     print("Turn: " .. turn)
     if turn == "x" then
       boardElement.mark = "x"
@@ -156,6 +197,18 @@ function tapEvent( event )
   if markWinColumn ~= "" then
     --TODO : show who win and drow the line.
     print("column win: " .. column, "Mark: " .. markWinColumn)
+  end
+
+  local markWinLeftTop , index = FindLeftTop()
+  if markWinLeftTop ~= "" then
+    --TODO : show who win and drow the line.
+    print("LeftTop win: " .. index, "Mark: " .. markWinLeftTop)
+  end
+
+  local markWinRightTop , index = FindRightTop()
+  if markWinRightTop ~= "" then
+    --TODO : show who win and drow the line.
+    print("LeftTop win: " .. index, "Mark: " .. markWinRightTop)
   end
   return true
 end
