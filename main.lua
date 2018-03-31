@@ -7,14 +7,28 @@ local Board = {{},{},{}}
 local BoardElement = {}
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
+local uiGroup = display.newGroup()
+local run = true
+
 local items = {}
 mt = { element, mark}
 local turn = "x" -- could be "x" or "o"
-local exitButton = display.newRect(display.contentWidth - 50, 20, 30, 30)
+local exitButton = display.newRect(
+  display.contentWidth - display.contentWidth / 2,
+  display.contentHeight - 20 - 30,
+  30,
+  30)
 exitButton:setFillColor(1.0, 0.0, 0.0)
+local textTurn = display.newText(uiGroup,
+  "Turn: " .. turn,
+   display.contentWidth / 2,
+   90,
+   native.systemFont, 18)
 function ExitTapEvent( event )
   EndCleanAll()
   turn = "x"
+  run = true
+  textTurn.text = "Turn: " .. turn
   --os.exit()
 end
 exitButton:addEventListener("tap", ExitTapEvent)
@@ -169,6 +183,9 @@ function IsAllMarksSet()
 end
 
 function tapEvent( event )
+  if run == false then
+    return true
+  end
   print("tap: " .. event.target.name)
   print("pos: " .. event.target.x .. "\ty: " .. event.target.y)
   boardElement = FindElement(event.target.name)
@@ -210,6 +227,7 @@ function tapEvent( event )
     --TODO : show who win and drow the line.
     print("LeftTop win: " .. index, "Mark: " .. markWinRightTop)
   end
+  textTurn.text = ("Turn: " .. turn)
   return true
 end
 
