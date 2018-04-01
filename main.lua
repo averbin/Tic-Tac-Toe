@@ -19,19 +19,21 @@ local exitButton = display.newRect(
   30,
   30)
 exitButton:setFillColor(1.0, 0.0, 0.0)
+
 local textTurn = display.newText(uiGroup,
   "Turn: " .. turn,
    display.contentWidth / 2,
    90,
    native.systemFont, 18)
-function ExitTapEvent( event )
+
+function RetryTapEvent( event )
   EndCleanAll()
   turn = "x"
   run = true
   textTurn.text = "Turn: " .. turn
   --os.exit()
 end
-exitButton:addEventListener("tap", ExitTapEvent)
+exitButton:addEventListener("tap", RetryTapEvent)
 
 function FindElement(name)
   print("Searching element: " .. name)
@@ -69,19 +71,19 @@ function FindByVertical()
 end
 
 function FindByHorizontal()
-  for i, v in pairs( Board ) do
+  for row, v in pairs( Board ) do
     local counterForX = 0
     local counterForO = 0
-    for j , value in pairs(v) do
+    for column , value in pairs(v) do
       if value.mark == "x" then
         counterForX = counterForX + 1
         if counterForX == 3 then
-          return "x", i -- x win.
+          return "x", row -- x win.
         end
       elseif value.mark == "o" then
         counterForO = counterForO + 1
         if counterForO == 3 then
-          return "o", i -- y win.
+          return "o", row -- y win.
         end
       end
     end
@@ -113,7 +115,6 @@ function FindRightTop()
   local counterForO = 0
   local row = 1
   for column = #Board , 1, -1 do
-    print("position: " .. row .. " : " .. column)
     if(Board[row][column].mark == "x") then
       counterForX = counterForX + 1
       if(counterForX == #Board) then
@@ -208,24 +209,36 @@ function tapEvent( event )
   if markWinRow ~= "" then
     --TODO : show who win and drow the line.
     print("row win: " .. row, "Mark: " .. markWinRow)
+    textTurn.text = "Won: " .. markWinRow
+    run = false
+    return true
   end
 
   local markWinColumn , column = FindByVertical()
   if markWinColumn ~= "" then
     --TODO : show who win and drow the line.
     print("column win: " .. column, "Mark: " .. markWinColumn)
+    textTurn.text = "Won: " .. markWinColumn
+    run = false
+    return true
   end
 
   local markWinLeftTop , index = FindLeftTop()
   if markWinLeftTop ~= "" then
     --TODO : show who win and drow the line.
     print("LeftTop win: " .. index, "Mark: " .. markWinLeftTop)
+    textTurn.text = "Won: " .. markWinLeftTop
+    run = false
+    return true
   end
 
   local markWinRightTop , index = FindRightTop()
   if markWinRightTop ~= "" then
     --TODO : show who win and drow the line.
     print("LeftTop win: " .. index, "Mark: " .. markWinRightTop)
+    textTurn.text = "Won: " .. markWinRightTop
+    run = false
+    return true
   end
   textTurn.text = ("Turn: " .. turn)
   return true
@@ -242,16 +255,24 @@ function BoardElement.new(xpos, ypos, size, name)
   return set
 end
 
-local range = 70
+function CreateBoard()
+  local range = 70
+  local addH = 0
+  local counter = 1
 
-local addH = 0
-local counter = 1
-for j = 1 , 3  do
-  local addW = 0
-  for i = 1, 3 do
-    Board[j][i] = BoardElement.new(range * i + addW, range * j + addH + 100, range, tostring(counter))
-    counter = counter + 1
-    addW = addW + 20
+  for row = 1 , 3  do
+    local addW = 0
+    for column = 1, 3 do
+      Board[row][column] = BoardElement.new(
+        range * column + addW,
+        range * row + addH + 100,
+        range,
+        tostring(counter))
+      counter = counter + 1
+      addW = addW + 20
+    end
+    addH = addH + 20
   end
-  addH = addH + 20
 end
+
+CreateBoard()
