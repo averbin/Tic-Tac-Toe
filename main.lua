@@ -47,48 +47,49 @@ function FindElement(name)
 end
 
 function FindByVertical()
-  local columnCounter = #Board[1]
-  for column = 1, columnCounter do
-    local counterForX = 0
-    local counterForO = 0
+  for column = 1, #Board do
+    local counterForX = {}
+    local counterForO = {}
     for row = 1, #Board[column] do
-      boardElement = Board[row][column]
+      local boardElement = Board[row][column]
       if boardElement.mark == "x" then
-        counterForX = counterForX + 1
-        if counterForX == #Board then
-          return "x", column
+        counterForX[row] = boardElement
+        if #counterForX == #Board then
+          return counterForX
         end
       elseif boardElement.mark == "o" then
-        counterForO = counterForO + 1
-        if counterForO == #Board then
-          return "o", column
+        counterForO[row] = boardElement
+        if #counterForO == #Board then
+          return counterForO
         end
       end
     end
   end
 
-  return "", 0
+  return nil
 end
 
 function FindByHorizontal()
-  for row, v in pairs( Board ) do
-    local counterForX = 0
-    local counterForO = 0
-    for column , value in pairs(v) do
-      if value.mark == "x" then
-        counterForX = counterForX + 1
-        if counterForX == 3 then
-          return "x", row -- x win.
+  for column = 1, #Board do
+    local counterForX = {}
+    local counterForO = {}
+    for row = 1 , #Board[column] do
+      local boardElement = Board[column][row]
+      if boardElement.mark == "x" then
+        counterForX[row] = boardElement
+        if #counterForX == #Board then
+          return counterForX -- x win
         end
-      elseif value.mark == "o" then
-        counterForO = counterForO + 1
-        if counterForO == 3 then
-          return "o", row -- y win.
+      elseif boardElement.mark == "o" then
+        counterForO[row] = boardElement
+        if #counterForO == #Board then
+          return counterForO -- o win.
         end
       end
     end
   end
-  return "", 0
+
+  return nil
 end
 
 function FindLeftTop()
@@ -113,20 +114,20 @@ end
 function FindRightTop()
   local counterForX = 0
   local counterForO = 0
-  local row = 1
-  for column = #Board , 1, -1 do
-    if(Board[row][column].mark == "x") then
+  local column = 1
+  for row = #Board , 1, -1 do
+    if(Board[column][row].mark == "x") then
       counterForX = counterForX + 1
       if(counterForX == #Board) then
-        return "x", row
+        return "x", column
       end
-    elseif(Board[row][column].mark == "o") then
+    elseif(Board[column][row].mark == "o") then
       counterForO = counterForO + 1
       if(counterForO == #Board) then
-        return "o", row
+        return "o", column
       end
     end
-    row = row + 1
+    column = column + 1
   end
 
   return "", 0
@@ -205,20 +206,20 @@ function tapEvent( event )
     print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
   end
 
-  local markWinRow , row = FindByHorizontal()
-  if markWinRow ~= "" then
+  local markWinRow = FindByHorizontal()
+  if markWinRow ~= nil and markWinRow ~= 0 then
     --TODO : show who win and drow the line.
-    print("row win: " .. row, "Mark: " .. markWinRow)
-    textTurn.text = "Won: " .. markWinRow
+    --print("row win: " .. row, "Mark: " .. markWinRow)
+    textTurn.text = "Won: " .. markWinRow[1].mark
     run = false
     return true
   end
 
-  local markWinColumn , column = FindByVertical()
-  if markWinColumn ~= "" then
+  local markWinColumn = FindByVertical()
+  if markWinColumn ~= nil and #markWinColumn ~= 0 then
     --TODO : show who win and drow the line.
-    print("column win: " .. column, "Mark: " .. markWinColumn)
-    textTurn.text = "Won: " .. markWinColumn
+    --print("column win: " .. column, "Mark: " .. markWinColumn)
+    textTurn.text = "Won: " .. markWinColumn[1].mark
     run = false
     return true
   end
