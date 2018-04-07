@@ -93,44 +93,45 @@ function FindByHorizontal()
 end
 
 function FindLeftTop()
-  local counterForX = 0
-  local counterForO = 0
+  local counterForX = {}
+  local counterForO = {}
   for i = 1 , #Board do
     if(Board[i][i].mark == "x") then
-      counterForX = counterForX + 1
-      if counterForX == #Board then
-        return "x" , i
+      counterForX[i] = Board[i][i]
+      print("Count: " .. #counterForX)
+      if #counterForX == #Board then
+        return counterForX
       end
     elseif(Board[i][i].mark == "o") then
-      counterForO = counterForO + 1
-      if counterForO == #Board then
-        return "o" , i
+      counterForO[i] = Board[i][i]
+      if #counterForO == #Board then
+        return counterForO
       end
     end
   end
-  return "", 0
+  return {}
 end
 
 function FindRightTop()
-  local counterForX = 0
-  local counterForO = 0
+  local counterForX = {}
+  local counterForO = {}
   local column = 1
   for row = #Board , 1, -1 do
     if(Board[column][row].mark == "x") then
-      counterForX = counterForX + 1
-      if(counterForX == #Board) then
-        return "x", column
+      counterForX[row] = Board[column][row]
+      if #counterForX == #Board then
+        return counterForX
       end
     elseif(Board[column][row].mark == "o") then
-      counterForO = counterForO + 1
-      if(counterForO == #Board) then
-        return "o", column
+      counterForO[row] = Board[column][row]
+      if #counterForO == #Board then
+        return counterForO
       end
     end
     column = column + 1
   end
 
-  return "", 0
+  return {}
 end
 
 function DrawCircle(xPos, yPos)
@@ -224,20 +225,18 @@ function tapEvent( event )
     return true
   end
 
-  local markWinLeftTop , index = FindLeftTop()
-  if markWinLeftTop ~= "" then
+  local markWinLeftTop = FindLeftTop()
+  if markWinLeftTop ~= nil and #markWinLeftTop ~= 0 then
     --TODO : show who win and drow the line.
-    print("LeftTop win: " .. index, "Mark: " .. markWinLeftTop)
-    textTurn.text = "Won: " .. markWinLeftTop
+    textTurn.text = "Won: " .. markWinLeftTop[1].mark
     run = false
     return true
   end
 
-  local markWinRightTop , index = FindRightTop()
-  if markWinRightTop ~= "" then
+  local markWinRightTop = FindRightTop()
+  if markWinRightTop ~= nil and #markWinRightTop ~= 0 then
     --TODO : show who win and drow the line.
-    print("LeftTop win: " .. index, "Mark: " .. markWinRightTop)
-    textTurn.text = "Won: " .. markWinRightTop
+    textTurn.text = "Won: " .. markWinRightTop[1].mark
     run = false
     return true
   end
