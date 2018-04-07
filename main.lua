@@ -28,7 +28,7 @@ local textTurn = display.newText(uiGroup,
 
 function RetryTapEvent( event )
   EndCleanAll()
-  turn = "x"
+  --turn = "x"
   run = true
   textTurn.text = "Turn: " .. turn
   --os.exit()
@@ -179,16 +179,56 @@ function IsAllMarksSet()
       end
     end
   end
-  if count == 9 then
+  if count == #Board * #Board[#Board] then
     return true
   end
   return false
+end
+
+function CalculatePoints(elements)
+  local firstPoint = { x = 0 , y = 0 }
+  local secondPoint = { x = 0, y = 0 }
+  local rangeByX = elements[#elements].element.x - elements[1].element.x
+  local rangeByY = elements[#elements].element.y - elements[1].element.y
+  if rangeByX ~= 0 and rangeByY == 0 then
+    -- count horizontal.
+    firstPoint.x = elements[1].element.x - elements[1].element.width / 2
+    firstPoint.y = elements[1].element.y
+    secondPoint.x = elements[#elements].element.x + elements[1].element.width / 2
+    secondPoint.y = elements[#elements].element.y
+  elseif rangeByY ~= 0 and rangeByX == 0 then
+    -- count vertical.
+    firstPoint.x = elements[1].element.x
+    firstPoint.y = elements[1].element.y - elements[1].element.height / 2
+    secondPoint.x = elements[#elements].element.x
+    secondPoint.y = elements[#elements].element.y + elements[1].element.height / 2
+  else
+    -- count other.
+    firstPoint.x = elements[1].element.x
+    firstPoint.y = elements[1].element.y
+    secondPoint.x = elements[#elements].element.x
+    secondPoint.y = elements[#elements].element.y
+  end
+  return firstPoint, secondPoint
+end
+
+function DrawTheLine(elements)
+  if elements ~= nil and #elements ~= o then
+    local startPoint , endPoint = CalculatePoints(elements)
+    local lineForWin = display.newLine(itemsGroup, startPoint.x, startPoint.y,
+                                      endPoint.x, endPoint.y)
+    lineForWin.strokeWidth = 2
+    table.insert(items, lineForWin)
+  else
+    error("Error, the are no elements at all!")
+  end
 end
 
 function tapEvent( event )
   if run == false then
     return true
   end
+
   print("tap: " .. event.target.name)
   print("pos: " .. event.target.x .. "\ty: " .. event.target.y)
   boardElement = FindElement(event.target.name)
@@ -212,6 +252,7 @@ function tapEvent( event )
     --TODO : show who win and drow the line.
     --print("row win: " .. row, "Mark: " .. markWinRow)
     textTurn.text = "Won: " .. markWinRow[1].mark
+    DrawTheLine(markWinRow)
     run = false
     return true
   end
@@ -221,6 +262,7 @@ function tapEvent( event )
     --TODO : show who win and drow the line.
     --print("column win: " .. column, "Mark: " .. markWinColumn)
     textTurn.text = "Won: " .. markWinColumn[1].mark
+    DrawTheLine(markWinColumn)
     run = false
     return true
   end
@@ -229,6 +271,7 @@ function tapEvent( event )
   if markWinLeftTop ~= nil and #markWinLeftTop ~= 0 then
     --TODO : show who win and drow the line.
     textTurn.text = "Won: " .. markWinLeftTop[1].mark
+    DrawTheLine(markWinLeftTop)
     run = false
     return true
   end
@@ -237,9 +280,17 @@ function tapEvent( event )
   if markWinRightTop ~= nil and #markWinRightTop ~= 0 then
     --TODO : show who win and drow the line.
     textTurn.text = "Won: " .. markWinRightTop[1].mark
+    DrawTheLine(markWinRightTop)
     run = false
     return true
   end
+
+  if IsAllMarksSet() then
+    textTurn.text = ("Draw")
+    run = false
+    return true
+  end
+
   textTurn.text = ("Turn: " .. turn)
   return true
 end
