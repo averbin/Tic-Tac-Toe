@@ -27,7 +27,7 @@ local textTurn = display.newText(uiGroup,
 
 function RetryTapEvent( event )
   EndCleanAll()
-  --turn = "x"
+  turn = "x"
   run = true
   textTurn.text = "Turn: " .. turn
   --os.exit()
@@ -35,11 +35,11 @@ end
 exitButton:addEventListener("tap", RetryTapEvent)
 
 function FindElement(name)
-  print("Searching element: " .. name)
   for i, v in pairs( Board ) do
     for j , value in pairs(v) do
       if value.element.name == name then
         return value
+      else
       end
     end
   end
@@ -141,7 +141,7 @@ function DrawCircle(xPos, yPos)
   table.insert(items, circle)
 end
 
-function DrawLines(xPos, yPos)
+function DrawEx(xPos, yPos)
   --xLines = {{},{}}
   local range = 20
   local firstLine = display.newLine(itemsGroup, xPos - range, yPos - range, xPos + range, yPos + range)
@@ -237,14 +237,12 @@ function tapEvent( event )
     return true
   end
 
-  print("tap: " .. event.target.name)
-  print("pos: " .. event.target.x .. "\ty: " .. event.target.y)
   boardElement = FindElement(event.target.name)
   if boardElement.mark == "" then
     print("Turn: " .. turn)
     if turn == "x" then
       boardElement.mark = "x"
-      DrawLines(event.target.x, event.target.y)
+      DrawEx(event.target.x, event.target.y)
       turn = "o"
     else
       boardElement.mark = "o"
@@ -257,8 +255,6 @@ function tapEvent( event )
 
   local markWinRow = FindByHorizontal()
   if markWinRow ~= nil and markWinRow ~= 0 then
-    --TODO : show who win and drow the line.
-    --print("row win: " .. row, "Mark: " .. markWinRow)
     textTurn.text = "Won: " .. markWinRow[1].mark
     DrawTheLine(markWinRow)
     run = false
@@ -267,8 +263,6 @@ function tapEvent( event )
 
   local markWinColumn = FindByVertical()
   if markWinColumn ~= nil and #markWinColumn ~= 0 then
-    --TODO : show who win and drow the line.
-    --print("column win: " .. column, "Mark: " .. markWinColumn)
     textTurn.text = "Won: " .. markWinColumn[1].mark
     DrawTheLine(markWinColumn)
     run = false
@@ -277,7 +271,6 @@ function tapEvent( event )
 
   local markWinLeftTop = FindLeftTop()
   if markWinLeftTop ~= nil and #markWinLeftTop ~= 0 then
-    --TODO : show who win and drow the line.
     textTurn.text = "Won: " .. markWinLeftTop[1].mark
     DrawTheLine(markWinLeftTop)
     run = false
@@ -286,7 +279,6 @@ function tapEvent( event )
 
   local markWinRightTop = FindRightTop()
   if markWinRightTop ~= nil and #markWinRightTop ~= 0 then
-    --TODO : show who win and drow the line.
     textTurn.text = "Won: " .. markWinRightTop[1].mark
     DrawTheLine(markWinRightTop)
     run = false
