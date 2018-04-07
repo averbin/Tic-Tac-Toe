@@ -11,7 +11,6 @@ local uiGroup = display.newGroup()
 local run = true
 
 local items = {}
-mt = { element, mark}
 local turn = "x" -- could be "x" or "o"
 local exitButton = display.newRect(
   display.contentWidth - display.contentWidth / 2,
@@ -115,20 +114,20 @@ end
 function FindRightTop()
   local counterForX = {}
   local counterForO = {}
-  local column = 1
-  for row = #Board , 1, -1 do
-    if(Board[column][row].mark == "x") then
-      counterForX[row] = Board[column][row]
+  local row = 1
+  for column = #Board , 1, -1 do
+    if(Board[row][column].mark == "x") then
+      counterForX[row] = Board[row][column]
       if #counterForX == #Board then
         return counterForX
       end
-    elseif(Board[column][row].mark == "o") then
-      counterForO[row] = Board[column][row]
+    elseif(Board[row][column].mark == "o") then
+      counterForO[row] = Board[row][column]
       if #counterForO == #Board then
         return counterForO
       end
     end
-    column = column + 1
+    row = row + 1
   end
 
   return {}
@@ -204,10 +203,19 @@ function CalculatePoints(elements)
     secondPoint.y = elements[#elements].element.y + elements[1].element.height / 2
   else
     -- count other.
-    firstPoint.x = elements[1].element.x
-    firstPoint.y = elements[1].element.y
-    secondPoint.x = elements[#elements].element.x
-    secondPoint.y = elements[#elements].element.y
+    if elements[1].element.x < elements[#elements].element.x then
+      -- leftTop -> bottomRight.
+      firstPoint.x = elements[1].element.x - elements[#elements].element.width / 2
+      firstPoint.y = elements[1].element.y - elements[#elements].element.height / 2
+      secondPoint.x = elements[#elements].element.x + elements[#elements].element.width / 2
+      secondPoint.y = elements[#elements].element.y + elements[#elements].element.height / 2
+    else
+      -- rightTop -> bottomLeft.
+      firstPoint.x = elements[1].element.x + elements[1].element.width / 2
+      firstPoint.y = elements[1].element.y - elements[1].element.height / 2
+      secondPoint.x = elements[#elements].element.x - elements[#elements].element.width / 2
+      secondPoint.y = elements[#elements].element.y + elements[#elements].element.height / 2
+    end
   end
   return firstPoint, secondPoint
 end
@@ -297,7 +305,7 @@ end
 
 function BoardElement.new(xpos, ypos, size, name)
   set = {}
-  setmetatable(set, mt)
+  setmetatable(set, { element, mark})
   set.mark = ""
   set.element = display.newRect(elementsGroup, xpos, ypos, size, size);
   set.element:setFillColor(0.2)
