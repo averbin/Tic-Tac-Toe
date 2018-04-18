@@ -3,8 +3,8 @@
 -- main.lua
 --
 -----------------------------------------------------------------------------------------
-local Board = {{},{},{}}
-local BoardElement = {}
+local Board = require "Board"
+local BoardElement = require "BoardElement"
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
 local uiGroup = display.newGroup()
@@ -295,18 +295,7 @@ function tapEvent( event )
   return true
 end
 
-function BoardElement.new(xpos, ypos, size, name)
-  set = {}
-  setmetatable(set, { element, mark})
-  set.mark = ""
-  set.element = display.newRect(elementsGroup, xpos, ypos, size, size);
-  set.element:setFillColor(0.2)
-  set.element:addEventListener("tap", tapEvent)
-  set.element.name = name
-  return set
-end
-
-function CreateBoard()
+function CreateBoard(ui_group, event)
   local range = 70
   local addH = 0
   local counter = 1
@@ -315,9 +304,11 @@ function CreateBoard()
     local addW = 0
     for column = 1, 3 do
       Board[row][column] = BoardElement.new(
+        ui_group,
         range * column + addW,
         range * row + addH + 100,
         range,
+        event,
         tostring(counter))
       counter = counter + 1
       addW = addW + 20
@@ -326,4 +317,4 @@ function CreateBoard()
   end
 end
 
-CreateBoard()
+CreateBoard(elementsGroup, tapEvent)
