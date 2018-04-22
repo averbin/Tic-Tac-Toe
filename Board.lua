@@ -3,6 +3,28 @@ local Board = {{},{},{}}
 Board.mt = {}
 setmetatable(Board, Board.mt)
 
+function Board:CreateBoard(ui_group, event)
+  local range = 70
+  local addH = 0
+  local counter = 1
+
+  for row = 1 , 3  do
+    local addW = 0
+    for column = 1, 3 do
+      self[row][column] = BoardElement.new(
+        ui_group,
+        range * column + addW,
+        range * row + addH + 100,
+        range,
+        event,
+        tostring(counter))
+      counter = counter + 1
+      addW = addW + 20
+    end
+    addH = addH + 20
+  end
+end
+
 function Board:EndCleanAll()
 
   for i = 1, #self do
