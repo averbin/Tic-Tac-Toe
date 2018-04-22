@@ -26,112 +26,13 @@ local textTurn = display.newText(uiGroup,
    native.systemFont, 18)
 
 function RetryTapEvent( event )
-  EndCleanAll()
+  Board:EndCleanAll()
   turn = "x"
   run = true
   textTurn.text = "Turn: " .. turn
   --os.exit()
 end
 exitButton:addEventListener("tap", RetryTapEvent)
-
-function FindElement(name)
-  for i, v in pairs( Board ) do
-    for j , value in pairs(v) do
-      if value.element.name == name then
-        return value
-      else
-      end
-    end
-  end
-end
-
-function FindByVertical()
-  for column = 1, #Board do
-    local counterForX = {}
-    local counterForO = {}
-    for row = 1, #Board[column] do
-      local boardElement = Board[row][column]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board then
-          return counterForX
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board then
-          return counterForO
-        end
-      end
-    end
-  end
-
-  return nil
-end
-
-function FindByHorizontal()
-  for column = 1, #Board do
-    local counterForX = {}
-    local counterForO = {}
-    for row = 1 , #Board[column] do
-      local boardElement = Board[column][row]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board then
-          return counterForX -- x win
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board then
-          return counterForO -- o win.
-        end
-      end
-    end
-  end
-
-  return nil
-end
-
-function FindLeftTop()
-  local counterForX = {}
-  local counterForO = {}
-  for i = 1 , #Board do
-    if(Board[i][i].mark == "x") then
-      counterForX[i] = Board[i][i]
-      print("Count: " .. #counterForX)
-      if #counterForX == #Board then
-        return counterForX
-      end
-    elseif(Board[i][i].mark == "o") then
-      counterForO[i] = Board[i][i]
-      if #counterForO == #Board then
-        return counterForO
-      end
-    end
-  end
-  return {}
-end
-
-function FindRightTop()
-  local counterForX = {}
-  local counterForO = {}
-  local row = 1
-  for column = #Board , 1, -1 do
-    if(Board[row][column].mark == "x") then
-      counterForX[row] = Board[row][column]
-      if #counterForX == #Board then
-        return counterForX
-      end
-    elseif(Board[row][column].mark == "o") then
-      counterForO[row] = Board[row][column]
-      if #counterForO == #Board then
-        return counterForO
-      end
-    end
-    row = row + 1
-  end
-
-  return {}
-end
 
 function DrawCircle(xPos, yPos)
   local circle = display.newCircle(itemsGroup, xPos, yPos, 20 )
@@ -152,10 +53,10 @@ function DrawEx(xPos, yPos)
   table.insert(items, secondLine)
 end
 
-function EndCleanAll()
+function Board:EndCleanAll()
   RemoveAllItems()
-  for i, v in pairs( Board ) do
-    for j , value in pairs(v) do
+  for i = 1, #self do
+    for j , value in pairs(self[i]) do
       value.mark = ""
     end
   end
@@ -169,20 +70,7 @@ function RemoveAllItems()
   end
 end
 
-function IsAllMarksSet()
-  local count = 0
-  for i, v in pairs( Board ) do
-    for j , value in pairs(v) do
-      if value.mark ~= "" then
-        count = count + 1
-      end
-    end
-  end
-  if count == #Board * #Board[#Board] then
-    return true
-  end
-  return false
-end
+
 
 function CalculatePoints(elements)
   local firstPoint = { x = 0 , y = 0 }
@@ -237,7 +125,7 @@ function tapEvent( event )
     return true
   end
 
-  boardElement = FindElement(event.target.name)
+  boardElement = Board:FindElement(event.target.name)
   if boardElement.mark == "" then
     print("Turn: " .. turn)
     if turn == "x" then
@@ -253,7 +141,7 @@ function tapEvent( event )
     print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
   end
 
-  local markWinRow = FindByHorizontal()
+  local markWinRow = Board:FindByHorizontal()
   if markWinRow ~= nil and markWinRow ~= 0 then
     textTurn.text = "Won: " .. markWinRow[1].mark
     DrawTheLine(markWinRow)
@@ -261,7 +149,7 @@ function tapEvent( event )
     return true
   end
 
-  local markWinColumn = FindByVertical()
+  local markWinColumn = Board:FindByVertical()
   if markWinColumn ~= nil and #markWinColumn ~= 0 then
     textTurn.text = "Won: " .. markWinColumn[1].mark
     DrawTheLine(markWinColumn)
@@ -269,7 +157,7 @@ function tapEvent( event )
     return true
   end
 
-  local markWinLeftTop = FindLeftTop()
+  local markWinLeftTop = Board:FindFromLeftToptoRightBottom()
   if markWinLeftTop ~= nil and #markWinLeftTop ~= 0 then
     textTurn.text = "Won: " .. markWinLeftTop[1].mark
     DrawTheLine(markWinLeftTop)
@@ -277,7 +165,7 @@ function tapEvent( event )
     return true
   end
 
-  local markWinRightTop = FindRightTop()
+  local markWinRightTop = Board:FindFromRightToptoBottomLeft()
   if markWinRightTop ~= nil and #markWinRightTop ~= 0 then
     textTurn.text = "Won: " .. markWinRightTop[1].mark
     DrawTheLine(markWinRightTop)
@@ -285,7 +173,7 @@ function tapEvent( event )
     return true
   end
 
-  if IsAllMarksSet() then
+  if Board:IsAllMarksSet() then
     textTurn.text = ("Draw")
     run = false
     return true
