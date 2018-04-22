@@ -26,6 +26,7 @@ local textTurn = display.newText(uiGroup,
    native.systemFont, 18)
 
 function RetryTapEvent( event )
+  RemoveAllItems()
   Board:EndCleanAll()
   turn = "x"
   run = true
@@ -53,14 +54,7 @@ function DrawEx(xPos, yPos)
   table.insert(items, secondLine)
 end
 
-function Board:EndCleanAll()
-  RemoveAllItems()
-  for i = 1, #self do
-    for j , value in pairs(self[i]) do
-      value.mark = ""
-    end
-  end
-end
+
 
 function RemoveAllItems()
   for i = #items, 1, -1 do

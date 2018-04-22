@@ -3,6 +3,15 @@ local Board = {{},{},{}}
 Board.mt = {}
 setmetatable(Board, Board.mt)
 
+function Board:EndCleanAll()
+
+  for i = 1, #self do
+    for j , value in pairs(self[i]) do
+      value.mark = ""
+    end
+  end
+end
+
 function Board:FindByHorizontal()
   for column = 1, #self do
     local counterForX = {}
