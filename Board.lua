@@ -25,8 +25,7 @@ function Board:CreateBoard(ui_group, event)
   end
 end
 
-function Board:EndCleanAll()
-
+function Board:CleanBoard()
   for i = 1, #self do
     for j , value in pairs(self[i]) do
       value.mark = ""
@@ -106,7 +105,7 @@ function Board:FindFromLeftToptoRightBottom()
       end
     end
   end
-  return {}
+  return nil
 end
 
 function Board:FindFromRightToptoBottomLeft()
@@ -128,7 +127,7 @@ function Board:FindFromRightToptoBottomLeft()
     row = row + 1
   end
 
-  return {}
+  return nil
 end
 
 function Board:IsAllMarksSet()

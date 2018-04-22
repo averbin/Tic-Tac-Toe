@@ -27,7 +27,7 @@ local textTurn = display.newText(uiGroup,
 
 function RetryTapEvent( event )
   RemoveAllItems()
-  Board:EndCleanAll()
+  Board:CleanBoard()
   turn = "x"
   run = true
   textTurn.text = "Turn: " .. turn
