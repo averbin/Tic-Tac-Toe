@@ -145,4 +145,16 @@ function Board:IsAllMarksSet()
   return false
 end
 
+function Board:SetTransaction()
+  local counter = 5
+  for i = 1, #self do
+    for j = 1 , #self[i] do
+        local placeToGo = self[i][j].element.y
+        self[i][j].element.y = 0
+        transition.to( self[i][j].element, { time = counter, y = placeToGo, transition=easing.outQuint  } )
+        counter = counter + counter
+    end
+  end
+end
+
 return Board

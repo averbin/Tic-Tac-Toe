@@ -45,8 +45,10 @@ function ItemInterface:DrawEx(group, xPos, yPos)
   local range = 20
   local firstLine = display.newLine(group, xPos - range, yPos - range, xPos + range, yPos + range)
   firstLine.strokeWidth = 2
+  --firstLine:setStrokeColor(0, 0, 1, 1)
   local secondLine = display.newLine(group, xPos + range, yPos - range, xPos - range, yPos + range)
   secondLine.strokeWidth = 2
+  --secondLine:setStrokeColor(0, 0, 1, 1)
   table.insert(self, firstLine)
   table.insert(self, secondLine)
 end

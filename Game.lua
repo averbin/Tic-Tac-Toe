@@ -16,6 +16,9 @@ local run = true
 local turn = "x" -- could be "x" or "o"
 local exitButton = nil
 local textTurn = nil
+local linesSound = nil
+local circleSound = nil
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -24,7 +27,7 @@ local textTurn = nil
 function RetryTapEvent( event )
   itemsInterface:RemoveAllItems()
   Board:CleanBoard()
-  turn = "x"
+  --turn = "x"
   run = true
   textTurn.text = "Turn: "  .. turn
   --os.exit()
@@ -41,10 +44,12 @@ function tapEvent( event )
     if turn == "x" then
       boardElement.mark = "x"
       itemsInterface:DrawEx(itemsGroup, event.target.x, event.target.y)
+      audio.play(linesSound)
       turn = "o"
     else
       boardElement.mark = "o"
       itemsInterface:DrawCircle(itemsGroup, event.target.x, event.target.y)
+      audio.play(circleSound)
       turn = "x"
     end
   else
@@ -115,7 +120,8 @@ function scene:create( event )
        native.systemFont, 18)
     textTurn:setFillColor(255, 239, 0)
 
-    Board:CreateBoard(elementsGroup, tapEvent)
+    linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
+    circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
 end
 
 
@@ -127,10 +133,10 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-
     elseif ( phase == "did" ) then
+      Board:CreateBoard(elementsGroup, tapEvent)
+      Board:SetTransaction()
         -- Code here runs when the scene is entirely on screen
-
     end
 end
 
@@ -156,7 +162,8 @@ function scene:destroy( event )
 
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
-
+    audio.dispose( linesSound )
+    audio.dispose( circleSound )
 end
 
 
