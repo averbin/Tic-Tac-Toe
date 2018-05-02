@@ -1,32 +1,31 @@
--------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------------
 --
+-- Play menu for Tic-Tac-Toy game, where you can choose one player or two.
 --
--- Tic-Tac-Toy menu.
---
---
--------------------------------------------------------------------------------
+-- -----------------------------------------------------------------------------------
 
--- -----------------------------------------------------------------------------------
--- New Scene
--- -----------------------------------------------------------------------------------
 
 local composer = require( "composer" )
+
 local scene = composer.newScene()
-local title = nil
-local playText = nil
+
+local backToMenuText = nil
+local onePlayerText = nil
+local twoPlayersText = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-local function GotoPlayScene( event )
-  --if event.phase == "will" then
-    playText:setFillColor(1.0, 1.0, 1.0)
-  --elseif event.phase == "did" then
-    composer.removeScene( "playMenu")
-    composer.gotoScene( "playMenu", { time=800, effect="crossFade" })
-  --end
+function GoBackToMenu()
+  composer.removeScene("menu")
+  composer.gotoScene("menu", { time=800, effect="crossFade"})
+end
+
+function GoToGame()
+  composer.removeScene("game")
+  composer.gotoScene("game", { time=800, effect="crossFade"})
 end
 
 -- -----------------------------------------------------------------------------------
@@ -35,14 +34,27 @@ end
 
 -- create()
 function scene:create( event )
+
     local sceneGroup = self.view
-    title = display.newImageRect(sceneGroup, "res/img/title.png", 300, 100)
-    title.x = display.contentCenterX
-    playText = display.newText(sceneGroup, "Play",
-    display.contentCenterX,
-    display.contentCenterY + 70, native.systemFont, 30)
-    playText:setFillColor(255, 239, 0)
-    playText:addEventListener("tap", GotoPlayScene)
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    backToMenuText = display.newText(sceneGroup, "Back",
+      display.contentCenterX,
+      display.contentCenterY + 70, native.systemFont, 30)
+    backToMenuText:setFillColor(255, 239, 0)
+
+    twoPlayersText = display.newText(sceneGroup, "Two Players",
+      display.contentCenterX,
+      backToMenuText.y - 50, native.systemFont, 30)
+    twoPlayersText:setFillColor(255, 239, 0)
+
+    onePlayerText = display.newText(sceneGroup, "One Player",
+      display.contentCenterX,
+      twoPlayersText.y - 50, native.systemFont, 30)
+    onePlayerText:setFillColor(255, 239, 0)
+
+    backToMenuText:addEventListener("tap", GoBackToMenu)
+    twoPlayersText:addEventListener("tap", GoToGame)
+    onePlayerText:addEventListener("tap", GoToGame)
 end
 
 
@@ -51,12 +63,13 @@ function scene:show( event )
 
     local sceneGroup = self.view
     local phase = event.phase
+
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        transition.to( title, { time = 1000, y = title.y + 100, transition=easing.outBounce } )
+
     end
 end
 
