@@ -80,8 +80,12 @@ function Board:FindByVertical()
 end
 
 function Board:FindElement(name)
-  for i, v in pairs( self ) do
-    for j , value in pairs(v) do
+  for i = 1, #self do
+    for j = 1 , #self[i] do
+      value = self[i][j]
+      if type(name) == "number" then
+        name = tostring(name)
+      end
       if value.element.name == name then
         return value
       end

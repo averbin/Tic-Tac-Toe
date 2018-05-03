@@ -14,6 +14,7 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local title = nil
 local playText = nil
+local playRectungle = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -38,11 +39,15 @@ function scene:create( event )
     local sceneGroup = self.view
     title = display.newImageRect(sceneGroup, "res/img/title.png", 300, 100)
     title.x = display.contentCenterX
-    playText = display.newText(sceneGroup, "Play",
+    playText = display.newText(sceneGroup, "Touch any where to play",
     display.contentCenterX,
-    display.contentCenterY + 70, native.systemFont, 30)
+    display.contentCenterY + 80, native.systemFont, 20)
     playText:setFillColor(255, 239, 0)
-    playText:addEventListener("tap", GotoPlayScene)
+
+    playRectungle = display.newRect(sceneGroup, 0, 0,
+      display.contentWidth * 2, display.contentHeight * 2)
+    playRectungle.alpha = 0.01
+    playRectungle:addEventListener("tap", GotoPlayScene)
 end
 
 
@@ -56,7 +61,7 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        transition.to( title, { time = 1000, y = title.y + 100, transition=easing.outBounce } )
+        transition.to( title, { time = 1000, y = display.contentCenterY, transition=easing.outBounce } )
     end
 end
 

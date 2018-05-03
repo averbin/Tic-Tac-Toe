@@ -18,44 +18,34 @@ local exitButton = nil
 local textTurn = nil
 local linesSound = nil
 local circleSound = nil
+local basicAI = { turn = "o", turnOn = true, isTurn = false}
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
-function RetryTapEvent( event )
-  itemsInterface:RemoveAllItems()
-  Board:CleanBoard()
-  --turn = "x"
-  run = true
-  textTurn.text = "Turn: "  .. turn
-  --os.exit()
-end
-
-function tapEvent( event )
-  if run == false then
-    return true
-  end
-
-  boardElement = Board:FindElement(event.target.name)
-  if boardElement.mark == "" then
+local function SetElementToBoard(boardElement)
+  if boardElement ~= nil and boardElement.mark == "" then
     print("Turn: " .. turn)
     if turn == "x" then
       boardElement.mark = "x"
-      itemsInterface:DrawEx(itemsGroup, event.target.x, event.target.y)
+      itemsInterface:DrawEx(itemsGroup, boardElement.element.x, boardElement.element.y)
       audio.play(linesSound)
       turn = "o"
     else
       boardElement.mark = "o"
-      itemsInterface:DrawCircle(itemsGroup, event.target.x, event.target.y)
+      itemsInterface:DrawCircle(itemsGroup, boardElement.element.x, boardElement.element.y)
       audio.play(circleSound)
       turn = "x"
     end
+    return true
   else
-    print("Exists: ".. event.target.name .. "\t" .. boardElement.mark)
+    print("Exists: ".. boardElement.element.name .. "\t" .. boardElement.mark)
+    return false
   end
+end
 
+local function CheckAllMarksOnBoard()
   local markWinRow = Board:FindByHorizontal()
   if markWinRow ~= nil and markWinRow ~= 0 then
     textTurn.text = "Won: " .. markWinRow[1].mark
@@ -93,8 +83,48 @@ function tapEvent( event )
     run = false
     return true
   end
+end
+
+local function gameLoop()
+  if run == true and basicAI.turnOn == true and basicAI.isTurn == true then
+    print(getmetatable(Board))
+    while true do
+      value = math.random(1, 9)
+      print("Value: " .. value)
+      boardElement = Board:FindElement(value)
+      if boardElement ~= nil and SetElementToBoard(boardElement) == true then
+        basicAI.isTurn = false
+        textTurn.text = ("Turn: " .. turn)
+        CheckAllMarksOnBoard()
+        break
+      end
+    end
+  end
+end
+
+function RetryTapEvent( event )
+  itemsInterface:RemoveAllItems()
+  Board:CleanBoard()
+  --turn = "x"
+  run = true
+  textTurn.text = "Turn: "  .. turn
+  --os.exit()
+end
+
+function tapEvent( event )
+  if run == false then
+    return true
+  end
+  print(getmetatable(Board))
+  boardElement = Board:FindElement(event.target.name)
+  SetElementToBoard(boardElement)
+  if basicAI.turnOn then
+    basicAI.isTurn = true
+  end
 
   textTurn.text = ("Turn: " .. turn)
+  CheckAllMarksOnBoard()
+
   return true
 end
 
@@ -122,8 +152,10 @@ function scene:create( event )
 
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
-end
 
+
+    gameLoopTimer = timer.performWithDelay( 1000, gameLoop, 0 )
+end
 
 -- show()
 function scene:show( event )
@@ -134,12 +166,11 @@ function scene:show( event )
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
-      Board:CreateBoard(elementsGroup, tapEvent)
-      Board:SetTransaction()
+        Board:CreateBoard(elementsGroup, tapEvent)
+        Board:SetTransaction()
         -- Code here runs when the scene is entirely on screen
     end
 end
-
 
 -- hide()
 function scene:hide( event )
@@ -156,7 +187,6 @@ function scene:hide( event )
     end
 end
 
-
 -- destroy()
 function scene:destroy( event )
 
@@ -165,7 +195,6 @@ function scene:destroy( event )
     audio.dispose( linesSound )
     audio.dispose( circleSound )
 end
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners

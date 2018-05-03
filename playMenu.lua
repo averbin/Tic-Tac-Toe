@@ -21,11 +21,19 @@ local twoPlayersText = nil
 function GoBackToMenu()
   composer.removeScene("menu")
   composer.gotoScene("menu", { time=800, effect="crossFade"})
+  backToMenuText:setFillColor(1, 1, 1)
 end
 
-function GoToGame()
+function GoOnePlayerMode()
   composer.removeScene("game")
   composer.gotoScene("game", { time=800, effect="crossFade"})
+  onePlayerText:setFillColor(1, 1, 1)
+end
+
+function GoTwoPlayersMode()
+  composer.removeScene("game")
+  composer.gotoScene("game", { time=800, effect="crossFade"})
+  twoPlayersText:setFillColor(1, 1, 1)
 end
 
 -- -----------------------------------------------------------------------------------
@@ -53,8 +61,8 @@ function scene:create( event )
     onePlayerText:setFillColor(255, 239, 0)
 
     backToMenuText:addEventListener("tap", GoBackToMenu)
-    twoPlayersText:addEventListener("tap", GoToGame)
-    onePlayerText:addEventListener("tap", GoToGame)
+    twoPlayersText:addEventListener("tap", GoTwoPlayersMode)
+    onePlayerText:addEventListener("tap", GoOnePlayerMode)
 end
 
 
