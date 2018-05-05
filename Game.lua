@@ -87,10 +87,8 @@ end
 
 local function gameLoop()
   if run == true and basicAI.turnOn == true and basicAI.isTurn == true then
-    print(getmetatable(Board))
     while true do
       value = math.random(1, 9)
-      print("Value: " .. value)
       boardElement = Board:FindElement(value)
       if boardElement ~= nil and SetElementToBoard(boardElement) == true then
         basicAI.isTurn = false
@@ -180,7 +178,7 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-
+        timer.cancel( gameLoop )
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
 

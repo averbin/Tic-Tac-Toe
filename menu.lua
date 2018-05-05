@@ -30,6 +30,14 @@ local function GotoPlayScene( event )
   --end
 end
 
+local function VisualEffectForText()
+  if playText ~= nil and playText.alpha >= 1 then
+    playText.alpha = 0
+  else
+    playText.alpha = playText.alpha + 0.03
+  end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -62,6 +70,7 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         transition.to( title, { time = 1000, y = display.contentCenterY, transition=easing.outBounce } )
+        --gameLoopTimer = timer.performWithDelay( 60, VisualEffectForText, 0 )
     end
 end
 
@@ -85,6 +94,9 @@ end
 -- destroy()
 function scene:destroy( event )
     local sceneGroup = self.view
+    --[[if VisualEffectForText ~= nil then
+      timer.cancel( VisualEffectForText )
+    end]]
     -- Code here runs prior to the removal of scene's view
 end
 

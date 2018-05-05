@@ -4,14 +4,13 @@
 --
 -- -----------------------------------------------------------------------------------
 
-
 local composer = require( "composer" )
-
 local scene = composer.newScene()
+local widget = require( "widget" )
 
 local backToMenuText = nil
-local onePlayerText = nil
-local twoPlayersText = nil
+local singlePlayerButton = nil
+local twoPlayersButton = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -24,16 +23,18 @@ function GoBackToMenu()
   backToMenuText:setFillColor(1, 1, 1)
 end
 
-function GoOnePlayerMode()
-  composer.removeScene("game")
-  composer.gotoScene("game", { time=800, effect="crossFade"})
-  onePlayerText:setFillColor(1, 1, 1)
+function GoOnePlayerMode( event )
+  if ( "ended" == event.phase ) then
+    composer.removeScene("game")
+    composer.gotoScene("game", { time=800, effect="crossFade"})
+  end
 end
 
-function GoTwoPlayersMode()
-  composer.removeScene("game")
-  composer.gotoScene("game", { time=800, effect="crossFade"})
-  twoPlayersText:setFillColor(1, 1, 1)
+function GoTwoPlayersMode(event)
+  if ( "ended" == event.phase ) then
+    composer.removeScene("game")
+    composer.gotoScene("game", { time=800, effect="crossFade"})
+  end
 end
 
 -- -----------------------------------------------------------------------------------
@@ -42,7 +43,6 @@ end
 
 -- create()
 function scene:create( event )
-
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
     backToMenuText = display.newText(sceneGroup, "Back",
@@ -50,19 +50,31 @@ function scene:create( event )
       display.contentCenterY + 70, native.systemFont, 30)
     backToMenuText:setFillColor(255, 239, 0)
 
-    twoPlayersText = display.newText(sceneGroup, "Two Players",
-      display.contentCenterX,
-      backToMenuText.y - 50, native.systemFont, 30)
-    twoPlayersText:setFillColor(255, 239, 0)
+    twoPlayersButton = widget.newButton(
+    {
+        width = 300,
+        height = 50,
+        defaultFile = "res/img/TwoPlayers.png",
+        overFile = "res/img/TwoPlayers_selected.png",
+        onEvent = GoTwoPlayersMode
+    })
 
-    onePlayerText = display.newText(sceneGroup, "One Player",
-      display.contentCenterX,
-      twoPlayersText.y - 50, native.systemFont, 30)
-    onePlayerText:setFillColor(255, 239, 0)
+    twoPlayersButton.x = display.contentCenterX
+    twoPlayersButton.y = backToMenuText.y - 50
+
+    singlePlayerButton = widget.newButton(
+    {
+        width = 300,
+        height = 50,
+        defaultFile = "res/img/SinglePlayer.png",
+        overFile = "res/img/SinglePlayer_selected.png",
+        onEvent = GoOnePlayerMode
+    })
+
+    singlePlayerButton.x = display.contentCenterX
+    singlePlayerButton.y = twoPlayersButton.y - 70
 
     backToMenuText:addEventListener("tap", GoBackToMenu)
-    twoPlayersText:addEventListener("tap", GoTwoPlayersMode)
-    onePlayerText:addEventListener("tap", GoOnePlayerMode)
 end
 
 
@@ -90,22 +102,19 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-
+        singlePlayerButton:removeSelf()
+        twoPlayersButton:removeSelf()
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-
     end
 end
 
 
 -- destroy()
 function scene:destroy( event )
-
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
-
 end
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners
