@@ -33,6 +33,15 @@ function Board:CleanBoard()
   end
 end
 
+function Board:DeleteElements()
+  for i = 1, #self * #self[1] do
+      local boardElement = self:FindElement(i)
+      if boardElement ~= nil then
+        boardElement.element:removeSelf()
+      end
+  end
+end
+
 function Board:FindByHorizontal()
   for column = 1, #self do
     local counterForX = {}

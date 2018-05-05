@@ -7,7 +7,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local gameData = require ("GameData")
-
+local widget = require( "widget" )
 local Board = require "Board"
 local BoardElement = require "BoardElement"
 local itemsInterface = require "ItemInterface"
@@ -20,6 +20,7 @@ local textTurn = nil
 local linesSound = nil
 local circleSound = nil
 local basicAI = { turn = "o", turnOn = gameData.isSingle, isTurn = false}
+local menuButton = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -127,6 +128,13 @@ function tapEvent( event )
   return true
 end
 
+function GoBackToMenu(event)
+  if ( "ended" == event.phase ) then
+    composer.removeScene("menu")
+    composer.gotoScene("menu", { time=800, effect="crossFade"})
+  end
+end
+
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -141,6 +149,18 @@ function scene:create( event )
       display.contentHeight - 50, 30, 30)
     exitButton:setFillColor(1.0, 0.0, 0.0)
     exitButton:addEventListener("tap", RetryTapEvent)
+
+    menuButton = widget.newButton(
+    {
+        width = 30,
+        height = 30,
+        defaultFile = "res/img/backToMenu.png",
+        overFile = "res/img/backToMenu_selected.png",
+        onEvent = GoBackToMenu
+    })
+
+    menuButton.x = display.contentWidth - 50
+    menuButton.y = 30
 
     textTurn = display.newText(sceneGroup,
       "Turn: " .. turn,
@@ -178,10 +198,13 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        timer.cancel( gameLoop )
+        --timer.cancel( gameLoop )
+        itemsInterface:RemoveAllItems()
+        Board:CleanBoard()
+        Board:DeleteElements()
+        menuButton:removeSelf()
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-
     end
 end
 

@@ -15,7 +15,7 @@ local scene = composer.newScene()
 local title = nil
 local playText = nil
 local playRectungle = nil
-
+local gameLoopTimer = nil
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -30,7 +30,7 @@ local function GotoPlayScene( event )
   --end
 end
 
-local function VisualEffectForText()
+local function VisualEffectForText( event )
   if playText ~= nil and playText.alpha >= 1 then
     playText.alpha = 0
   else
@@ -70,7 +70,7 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         transition.to( title, { time = 1000, y = display.contentCenterY, transition=easing.outBounce } )
-        --gameLoopTimer = timer.performWithDelay( 60, VisualEffectForText, 0 )
+        gameLoopTimer = timer.performWithDelay( 60, VisualEffectForText, 0)
     end
 end
 
@@ -86,7 +86,7 @@ function scene:hide( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
-
+        timer.cancel( gameLoopTimer )
     end
 end
 
@@ -97,6 +97,7 @@ function scene:destroy( event )
     --[[if VisualEffectForText ~= nil then
       timer.cancel( VisualEffectForText )
     end]]
+
     -- Code here runs prior to the removal of scene's view
 end
 
