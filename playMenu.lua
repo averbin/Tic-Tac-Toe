@@ -7,6 +7,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local widget = require( "widget" )
+local gameData = require ("GameData")
 
 local backToMenuText = nil
 local singlePlayerButton = nil
@@ -25,6 +26,7 @@ end
 
 function GoOnePlayerMode( event )
   if ( "ended" == event.phase ) then
+    gameData.isSingle = true
     composer.removeScene("game")
     composer.gotoScene("game", { time=800, effect="crossFade"})
   end
@@ -32,6 +34,7 @@ end
 
 function GoTwoPlayersMode(event)
   if ( "ended" == event.phase ) then
+    gameData.isSingle = false
     composer.removeScene("game")
     composer.gotoScene("game", { time=800, effect="crossFade"})
   end

@@ -6,6 +6,7 @@
 
 local composer = require( "composer" )
 local scene = composer.newScene()
+local gameData = require ("GameData")
 
 local Board = require "Board"
 local BoardElement = require "BoardElement"
@@ -18,7 +19,7 @@ local exitButton = nil
 local textTurn = nil
 local linesSound = nil
 local circleSound = nil
-local basicAI = { turn = "o", turnOn = true, isTurn = false}
+local basicAI = { turn = "o", turnOn = gameData.isSingle, isTurn = false}
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -150,7 +151,6 @@ function scene:create( event )
 
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
-
 
     gameLoopTimer = timer.performWithDelay( 1000, gameLoop, 0 )
 end
