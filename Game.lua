@@ -17,6 +17,10 @@ local run = true
 local turn = "x" -- could be "x" or "o"
 local retryButton = nil
 local textTurn = nil
+local firstPlayerText = nil
+local firstPlayerCounter = 0
+local secondPlayerText = nil
+local secondPlayerCounter = 0
 local linesSound = nil
 local circleSound = nil
 local basicAI = { markUsesByAI = gameData.secondPlayer,
@@ -50,12 +54,39 @@ local function SetElementToBoard(boardElement)
   end
 end
 
+local function SetUpTexts()
+  firstPlayerText.text = "Player1 (" .. gameData.firstPlayer .. "): " .. tostring(firstPlayerCounter)
+  local whoPlayText = ""
+  if gameData.isSingle == true then
+    whoPlayText = "Computer ("
+  else
+    whoPlayText = "Player2 ("
+  end
+  secondPlayerText.text = whoPlayText .. gameData.secondPlayer .. "): " .. tostring(secondPlayerCounter)
+end
+
+local function SetupCounter(mark)
+  if mark ~= nil and mark.mark == gameData.firstPlayer then
+    firstPlayerCounter = firstPlayerCounter + 1
+  else
+    secondPlayerCounter = secondPlayerCounter + 1
+  end
+
+  if firstPlayerCounter > 99 or secondPlayerCounter > 99 then
+    firstPlayerCounter = 0
+    secondPlayerCounter = 0
+  end
+
+  SetUpTexts()
+end
+
 local function CheckMarksIndividual( marks )
   if marks ~= nil and #marks ~= 0 then
     textTurn.text = "Won: " .. marks[1].mark
     turn = marks[1].mark
     itemsInterface:DrawTheLine(itemsGroup, marks)
     run = false
+    SetupCounter(marks[1])
     return true
   end
   return false
@@ -194,10 +225,22 @@ function scene:create( event )
        native.systemFont, 18)
     textTurn:setFillColor(255, 239, 0)
 
+    firstPlayerText = display.newText( sceneGroup,
+    "",
+    textTurn.x - 80, textTurn.y, native.systemFont, 12)
+    firstPlayerText:setFillColor(255, 239, 0)
+
+    secondPlayerText = display.newText( sceneGroup,
+    "",
+    display.contentWidth - 70, textTurn.y, native.systemFont, 12)
+    secondPlayerText:setFillColor(255, 239, 0)
+    SetUpTexts()
+
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
-
-    gameLoopTimer = timer.performWithDelay( 1000, AIStep, 0 )
+    if gameData.isSingle == true then
+      gameLoopTimer = timer.performWithDelay( 1000, AIStep, 0 )
+    end
 end
 
 -- show()
