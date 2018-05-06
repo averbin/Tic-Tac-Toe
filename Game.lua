@@ -23,6 +23,7 @@ local basicAI = { markUsesByAI = gameData.secondPlayer,
                   isSinglePlayer = gameData.isSingle,
                   isTurn = false }
 local menuButton = nil
+local soundImage = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -91,7 +92,7 @@ local function AIStep()
   end
 end
 
-function RetryTapEvent( event )
+local function RetryTapEvent( event )
   itemsInterface:RemoveAllItems()
   Board:CleanBoard()
   --turn = "x"
@@ -102,7 +103,7 @@ function RetryTapEvent( event )
   end
 end
 
-function tapEvent( event )
+local function tapEvent( event )
   if run == false then
     return true
   end
@@ -122,7 +123,32 @@ function tapEvent( event )
   return true
 end
 
-function GoBackToMenu(event)
+local function SwapImage(oldImage, pathToImage)
+  if oldImage ~= nil then
+    local currentImage = display.newImageRect(
+      oldImage.parent,
+      pathToImage, oldImage.width, oldImage.height)
+      currentImage.x = oldImage.x
+      currentImage.y = oldImage.y
+      oldImage:removeSelf()
+      return currentImage
+  end
+end
+
+local function TurnOnOffSound()
+  if gameData.turnOnSound then
+    gameData.turnOnSound = false
+    audio.setVolume(0.0)
+    soundImage = SwapImage(soundImage, "res/img/turnOffSound.png")
+  else
+    gameData.turnOnSound = true
+    audio.setVolume(1)
+    soundImage = SwapImage(soundImage, "res/img/turnOnSound.png")
+  end
+  soundImage:addEventListener("tap", TurnOnOffSound)
+end
+
+local function GoBackToMenu(event)
   if ( "ended" == event.phase ) then
     composer.removeScene("menu")
     composer.gotoScene("menu", { time=800, effect="crossFade"})
@@ -155,6 +181,11 @@ function scene:create( event )
 
     menuButton.x = display.contentWidth - 50
     menuButton.y = 30
+
+    soundImage = display.newImageRect( sceneGroup, "res/img/turnOnSound.png", 30, 30)
+    soundImage.x = menuButton.x - soundImage.width - 10
+    soundImage.y = menuButton.y
+    soundImage:addEventListener("tap", TurnOnOffSound)
 
     textTurn = display.newText(sceneGroup,
       "Turn: " .. turn,
