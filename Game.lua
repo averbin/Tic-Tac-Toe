@@ -4,10 +4,10 @@
 --
 -- -----------------------------------------------------------------------------------
 
-local composer = require( "composer" )
+local composer = require "composer"
 local scene = composer.newScene()
-local gameData = require ("GameData")
-local widget = require( "widget" )
+local gameData = require "GameData"
+local widget = require "widget"
 local Board = require "Board"
 local BoardElement = require "BoardElement"
 local itemsInterface = require "ItemInterface"
@@ -15,11 +15,13 @@ local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
 local run = true
 local turn = "x" -- could be "x" or "o"
-local exitButton = nil
+local retryButton = nil
 local textTurn = nil
 local linesSound = nil
 local circleSound = nil
-local basicAI = { turn = "o", turnOn = gameData.isSingle, isTurn = false}
+local basicAI = { markUsesByAI = gameData.secondPlayer,
+                  isSinglePlayer = gameData.isSingle,
+                  isTurn = false }
 local menuButton = nil
 
 -- -----------------------------------------------------------------------------------
@@ -47,48 +49,35 @@ local function SetElementToBoard(boardElement)
   end
 end
 
+local function CheckMarksIndividual( marks )
+  if marks ~= nil and #marks ~= 0 then
+    textTurn.text = "Won: " .. marks[1].mark
+    turn = marks[1].mark
+    itemsInterface:DrawTheLine(itemsGroup, marks)
+    run = false
+    return true
+  end
+  return false
+end
+
 local function CheckAllMarksOnBoard()
-  local markWinRow = Board:FindByHorizontal()
-  if markWinRow ~= nil and markWinRow ~= 0 then
-    textTurn.text = "Won: " .. markWinRow[1].mark
-    itemsInterface:DrawTheLine(itemsGroup, markWinRow)
-    run = false
-    return true
-  end
 
-  local markWinColumn = Board:FindByVertical()
-  if markWinColumn ~= nil and #markWinColumn ~= 0 then
-    textTurn.text = "Won: " .. markWinColumn[1].mark
-    itemsInterface:DrawTheLine(itemsGroup, markWinColumn)
-    run = false
-    return true
-  end
-
-  local markWinLeftTop = Board:FindFromLeftToptoRightBottom()
-  if markWinLeftTop ~= nil and #markWinLeftTop ~= 0 then
-    textTurn.text = "Won: " .. markWinLeftTop[1].mark
-    itemsInterface:DrawTheLine(itemsGroup, markWinLeftTop)
-    run = false
-    return true
-  end
-
-  local markWinRightTop = Board:FindFromRightToptoBottomLeft()
-  if markWinRightTop ~= nil and #markWinRightTop ~= 0 then
-    textTurn.text = "Won: " .. markWinRightTop[1].mark
-    itemsInterface:DrawTheLine(itemsGroup, markWinRightTop)
-    run = false
-    return true
-  end
+  if CheckMarksIndividual(Board:FindByHorizontal()) then return true end
+  if CheckMarksIndividual(Board:FindByVertical()) then return true end
+  if CheckMarksIndividual(Board:FindFromLeftToptoRightBottom()) then return true end
+  if CheckMarksIndividual(Board:FindFromRightToptoBottomLeft()) then return true end
 
   if Board:IsAllMarksSet() then
     textTurn.text = ("Draw")
     run = false
     return true
   end
+
+  return false
 end
 
-local function gameLoop()
-  if run == true and basicAI.turnOn == true and basicAI.isTurn == true then
+local function AIStep()
+  if run == true and basicAI.isSinglePlayer == true and basicAI.isTurn == true then
     while true do
       value = math.random(1, 9)
       boardElement = Board:FindElement(value)
@@ -108,23 +97,28 @@ function RetryTapEvent( event )
   --turn = "x"
   run = true
   textTurn.text = "Turn: "  .. turn
-  --os.exit()
+  if basicAI.isSinglePlayer and turn == basicAI.markUsesByAI then
+    basicAI.isTurn = true
+  end
 end
 
 function tapEvent( event )
   if run == false then
     return true
   end
-  print(getmetatable(Board))
-  boardElement = Board:FindElement(event.target.name)
-  SetElementToBoard(boardElement)
-  if basicAI.turnOn then
-    basicAI.isTurn = true
+
+  if gameData.isSingle and gameData.firstPlayer ~= turn then
+    return true
   end
 
-  textTurn.text = ("Turn: " .. turn)
-  CheckAllMarksOnBoard()
+  boardElement = Board:FindElement(event.target.name)
+  SetElementToBoard(boardElement)
 
+  textTurn.text = ("Turn: " .. turn)
+  local isWon = CheckAllMarksOnBoard()
+  if basicAI.isSinglePlayer and isWon ~= true then
+    basicAI.isTurn = true
+  end
   return true
 end
 
@@ -143,12 +137,12 @@ end
 function scene:create( event )
     local sceneGroup = self.view
 
-    exitButton = display.newRect(
+    retryButton = display.newRect(
       sceneGroup,
       display.contentWidth - display.contentWidth / 2,
       display.contentHeight - 50, 30, 30)
-    exitButton:setFillColor(1.0, 0.0, 0.0)
-    exitButton:addEventListener("tap", RetryTapEvent)
+    retryButton:setFillColor(1.0, 0.0, 0.0)
+    retryButton:addEventListener("tap", RetryTapEvent)
 
     menuButton = widget.newButton(
     {
@@ -172,7 +166,7 @@ function scene:create( event )
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
 
-    gameLoopTimer = timer.performWithDelay( 1000, gameLoop, 0 )
+    gameLoopTimer = timer.performWithDelay( 1000, AIStep, 0 )
 end
 
 -- show()

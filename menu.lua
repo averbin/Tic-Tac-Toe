@@ -58,15 +58,12 @@ function scene:create( event )
     playRectungle:addEventListener("tap", GotoPlayScene)
 end
 
-
 -- show()
 function scene:show( event )
-
     local sceneGroup = self.view
     local phase = event.phase
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         transition.to( title, { time = 1000, y = display.contentCenterY, transition=easing.outBounce } )
@@ -74,16 +71,13 @@ function scene:show( event )
     end
 end
 
-
 -- hide()
 function scene:hide( event )
-
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
         timer.cancel( gameLoopTimer )
@@ -94,13 +88,8 @@ end
 -- destroy()
 function scene:destroy( event )
     local sceneGroup = self.view
-    --[[if VisualEffectForText ~= nil then
-      timer.cancel( VisualEffectForText )
-    end]]
-
     -- Code here runs prior to the removal of scene's view
 end
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners

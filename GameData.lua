@@ -5,7 +5,9 @@
 -- -----------------------------------------------------------------------------------
 
 local GameData = {
-  isSingle = false
+  isSingle = false,
+  firstPlayer = "x",
+  secondPlayer = "o"
 }
 
 return GameData

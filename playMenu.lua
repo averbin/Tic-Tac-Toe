@@ -4,11 +4,11 @@
 --
 -- -----------------------------------------------------------------------------------
 
-local composer = require( "composer" )
-local scene = composer.newScene()
-local widget = require( "widget" )
-local gameData = require ("GameData")
+local composer = require "composer"
+local widget = require "widget"
+local gameData = require "GameData"
 
+local scene = composer.newScene()
 local backToMenuText = nil
 local singlePlayerButton = nil
 local twoPlayersButton = nil
@@ -27,16 +27,16 @@ end
 function GoOnePlayerMode( event )
   if ( "ended" == event.phase ) then
     gameData.isSingle = true
-    composer.removeScene("game")
-    composer.gotoScene("game", { time=800, effect="crossFade"})
+    composer.removeScene("Game")
+    composer.gotoScene("Game", { time=800, effect="crossFade"})
   end
 end
 
 function GoTwoPlayersMode(event)
   if ( "ended" == event.phase ) then
     gameData.isSingle = false
-    composer.removeScene("game")
-    composer.gotoScene("game", { time=800, effect="crossFade"})
+    composer.removeScene("Game")
+    composer.gotoScene("Game", { time=800, effect="crossFade"})
   end
 end
 
@@ -80,26 +80,21 @@ function scene:create( event )
     backToMenuText:addEventListener("tap", GoBackToMenu)
 end
 
-
 -- show()
 function scene:show( event )
-
     local sceneGroup = self.view
     local phase = event.phase
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-
     end
 end
 
 
 -- hide()
 function scene:hide( event )
-
     local sceneGroup = self.view
     local phase = event.phase
 
@@ -111,7 +106,6 @@ function scene:hide( event )
         -- Code here runs immediately after the scene goes entirely off screen
     end
 end
-
 
 -- destroy()
 function scene:destroy( event )
