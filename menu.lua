@@ -16,6 +16,7 @@ local title = nil
 local playText = nil
 local playRectungle = nil
 local gameLoopTimer = nil
+local creatorText = nil
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -56,6 +57,11 @@ function scene:create( event )
       display.contentWidth * 2, display.contentHeight * 2)
     playRectungle.alpha = 0.01
     playRectungle:addEventListener("tap", GotoPlayScene)
+
+    creatorText = display.newText(sceneGroup, "Made by Alexander Verbin",
+      display.contentCenterX,
+      display.contentHeight, native.systemFont, 12)
+    creatorText:setFillColor(255, 239, 0)
 end
 
 -- show()
