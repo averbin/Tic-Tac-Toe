@@ -267,6 +267,8 @@ function scene:hide( event )
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
         --timer.cancel( gameLoop )
+        firstPlayerCounter = 0
+        secondPlayerCounter = 0
         itemsInterface:RemoveAllItems()
         Board:CleanBoard()
         Board:DeleteElements()
