@@ -108,7 +108,7 @@ local function CheckAllMarksOnBoard()
   return false
 end
 
-local function AIStep()
+local function ComputerStep()
   if run == true and basicAI.isSinglePlayer == true and basicAI.isTurn == true then
     while true do
       value = math.random(1, 9)
@@ -239,7 +239,7 @@ function scene:create( event )
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
     if gameData.isSingle == true then
-      gameLoopTimer = timer.performWithDelay( 1000, AIStep, 0 )
+      gameLoopTimer = timer.performWithDelay( 1000, ComputerStep, 0 )
     end
 end
 
@@ -273,6 +273,8 @@ function scene:hide( event )
         Board:CleanBoard()
         Board:DeleteElements()
         menuButton:removeSelf()
+        soundImage:removeSelf()
+        retryButton:removeSelf()
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
     end

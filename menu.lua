@@ -60,7 +60,7 @@ function scene:create( event )
 
     creatorText = display.newText(sceneGroup, "Made by Alexander Verbin",
       display.contentCenterX,
-      display.contentHeight - 12, native.systemFont, 12)
+      display.contentHeight - 10, native.systemFont, 12)
     creatorText:setFillColor(255, 239, 0)
 end
 
