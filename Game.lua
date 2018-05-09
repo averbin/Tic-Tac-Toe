@@ -4,6 +4,7 @@
 --
 -- -----------------------------------------------------------------------------------
 
+-- requirements
 local composer = require "composer"
 local scene = composer.newScene()
 local gameData = require "GameData"
@@ -11,6 +12,7 @@ local widget = require "widget"
 local Board = require "Board"
 local BoardElement = require "BoardElement"
 local itemsInterface = require "ItemInterface"
+-- 
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
 local run = true

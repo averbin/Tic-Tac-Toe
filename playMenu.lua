@@ -50,7 +50,7 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
     backToMenuText = display.newText(sceneGroup, "Back",
       display.contentCenterX,
-      display.contentCenterY + 70, native.systemFont, 30)
+      display.contentCenterY + 90, native.systemFont, 30)
     backToMenuText:setFillColor(255, 239, 0)
 
     twoPlayersButton = widget.newButton(
