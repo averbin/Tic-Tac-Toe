@@ -12,7 +12,7 @@ local widget = require "widget"
 local Board = require "Board"
 local BoardElement = require "BoardElement"
 local itemsInterface = require "ItemInterface"
--- 
+--
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
 local run = true
@@ -25,6 +25,8 @@ local secondPlayerText = nil
 local secondPlayerCounter = 0
 local linesSound = nil
 local circleSound = nil
+local wonSound = nil
+local drawSound = nil
 local basicAI = { markUsesByAI = gameData.secondPlayer,
                   isSinglePlayer = gameData.isSingle,
                   isTurn = false }
@@ -89,6 +91,7 @@ local function CheckMarksIndividual( marks )
     itemsInterface:DrawTheLine(itemsGroup, marks)
     run = false
     SetupCounter(marks[1])
+    audio.play(wonSound)
     return true
   end
   return false
@@ -104,6 +107,7 @@ local function CheckAllMarksOnBoard()
   if Board:IsAllMarksSet() then
     textTurn.text = ("Draw")
     run = false
+    audio.play( drawSound )
     return true
   end
 
@@ -219,6 +223,7 @@ function scene:create( event )
     soundImage.x = menuButton.x - soundImage.width - 10
     soundImage.y = menuButton.y
     soundImage:addEventListener("tap", TurnOnOffSound)
+    TurnOnOffSound()
 
     textTurn = display.newText(sceneGroup,
       "Turn: " .. turn,
@@ -240,6 +245,8 @@ function scene:create( event )
 
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
+    wonSound = audio.loadSound("res/audio/boxing_bell.mp3")
+    drawSound = audio.loadSound("res/audio/applause8.mp3")
     if gameData.isSingle == true then
       gameLoopTimer = timer.performWithDelay( 1000, ComputerStep, 0 )
     end
@@ -289,6 +296,8 @@ function scene:destroy( event )
     -- Code here runs prior to the removal of scene's view
     audio.dispose( linesSound )
     audio.dispose( circleSound )
+    audio.dispose( wonSound )
+    audio.dispose( drawSound)
 end
 
 -- -----------------------------------------------------------------------------------
