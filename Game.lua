@@ -5,14 +5,15 @@
 -- -----------------------------------------------------------------------------------
 
 -- requirements
-local composer = require "composer"
-local scene = composer.newScene()
-local gameData = require "GameData"
-local widget = require "widget"
 local Board = require "Board"
 local BoardElement = require "BoardElement"
+local composer = require "composer"
+local gameData = require "GameData"
 local itemsInterface = require "ItemInterface"
+local widget = require "widget"
+local basicAI = require "BasicAI"
 --
+local scene = composer.newScene()
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
 local run = true
@@ -27,9 +28,6 @@ local linesSound = nil
 local circleSound = nil
 local wonSound = nil
 local drawSound = nil
-local basicAI = { markUsesByAI = gameData.secondPlayer,
-                  isSinglePlayer = gameData.isSingle,
-                  isTurn = false }
 local menuButton = nil
 local soundImage = nil
 
@@ -114,30 +112,12 @@ local function CheckAllMarksOnBoard()
   return false
 end
 
-local function ComputerStep()
-  if run == true and basicAI.isSinglePlayer == true and basicAI.isTurn == true then
-    while true do
-      value = math.random(1, 9)
-      boardElement = Board:FindElement(value)
-      if boardElement ~= nil and SetElementToBoard(boardElement) == true then
-        basicAI.isTurn = false
-        textTurn.text = ("Turn: " .. turn)
-        CheckAllMarksOnBoard()
-        break
-      end
-    end
-  end
-end
-
 local function RetryTapEvent( event )
   itemsInterface:RemoveAllItems()
   Board:CleanBoard()
   --turn = "x"
   run = true
   textTurn.text = "Turn: "  .. turn
-  if basicAI.isSinglePlayer and turn == basicAI.markUsesByAI then
-    basicAI.isTurn = true
-  end
 end
 
 local function tapEvent( event )
@@ -154,9 +134,6 @@ local function tapEvent( event )
 
   textTurn.text = ("Turn: " .. turn)
   local isWon = CheckAllMarksOnBoard()
-  if basicAI.isSinglePlayer and isWon ~= true then
-    basicAI.isTurn = true
-  end
   return true
 end
 
@@ -189,6 +166,14 @@ local function GoBackToMenu(event)
   if ( "ended" == event.phase ) then
     composer.removeScene("menu")
     composer.gotoScene("menu", { time=800, effect="crossFade"})
+  end
+end
+
+local function ComputerStep()
+  if basicAI == nil then
+    print("AI is nil")
+  else
+    basicAI.SayHello(basicAI)
   end
 end
 
@@ -247,8 +232,13 @@ function scene:create( event )
     circleSound = audio.loadSound("res/audio/circle_sound(pencil).mp3")
     wonSound = audio.loadSound("res/audio/boxing_bell.mp3")
     drawSound = audio.loadSound("res/audio/applause8.mp3")
-    if gameData.isSingle == true then
-      gameLoopTimer = timer.performWithDelay( 1000, ComputerStep, 0 )
+
+    basicAI.markUsesByAI = gameData.secondPlayer
+    basicAI.isSinglePlayer = gameData.isSingle
+    basicAI.isTurn = false
+    print("Parameters: " .. tostring(basicAI.markUsesByAI) .. " : " .. tostring(basicAI.isSinglePlayer) .. " : " .. tostring(basicAI.isTurn))
+    if basicAI.isSinglePlayer == true then
+      gameLoopTimer = timer.performWithDelay( 5000, ComputerStep, 1 )
     end
 end
 
@@ -263,6 +253,11 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         Board:CreateBoard(elementsGroup, tapEvent)
         Board:SetTransaction()
+        if basicAI == nil then
+          print("AI is nil")
+        else
+          print("Everything is fine.")
+        end
         -- Code here runs when the scene is entirely on screen
     end
 end
