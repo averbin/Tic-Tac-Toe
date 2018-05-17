@@ -16,8 +16,6 @@ local basicAI = require "BasicAI"
 local scene = composer.newScene()
 local elementsGroup = display.newGroup()
 local itemsGroup = display.newGroup()
-local run = true
-local turn = "x" -- could be "x" or "o"
 local retryButton = nil
 local textTurn = nil
 local firstPlayerText = nil
@@ -37,21 +35,19 @@ local soundImage = nil
 -- -----------------------------------------------------------------------------------
 local function SetElementToBoard(boardElement)
   if boardElement ~= nil and boardElement.mark == "" then
-    print("Turn: " .. turn)
-    if turn == "x" then
+    if gameData.turn == "x" then
       boardElement.mark = "x"
       itemsInterface:DrawEx(itemsGroup, boardElement.element.x, boardElement.element.y)
       audio.play(linesSound)
-      turn = "o"
+      gameData.turn = "o"
     else
       boardElement.mark = "o"
       itemsInterface:DrawCircle(itemsGroup, boardElement.element.x, boardElement.element.y)
       audio.play(circleSound)
-      turn = "x"
+      gameData.turn = "x"
     end
     return true
   else
-    print("Exists: ".. boardElement.element.name .. "\t" .. boardElement.mark)
     return false
   end
 end
@@ -67,8 +63,8 @@ local function SetUpTexts()
   secondPlayerText.text = whoPlayText .. gameData.secondPlayer .. "): " .. tostring(secondPlayerCounter)
 end
 
-local function SetupCounter(mark)
-  if mark ~= nil and mark.mark == gameData.firstPlayer then
+local function SetupCounter(boardElement)
+  if boardElement ~= nil and boardElement.mark == gameData.firstPlayer then
     firstPlayerCounter = firstPlayerCounter + 1
   else
     secondPlayerCounter = secondPlayerCounter + 1
@@ -82,13 +78,19 @@ local function SetupCounter(mark)
   SetUpTexts()
 end
 
-local function CheckMarksIndividual( marks )
-  if marks ~= nil and #marks ~= 0 then
-    textTurn.text = "Won: " .. marks[1].mark
-    turn = marks[1].mark
-    itemsInterface:DrawTheLine(itemsGroup, marks)
-    run = false
-    SetupCounter(marks[1])
+local function CheckMarksIndividual( boardElements )
+  if boardElements ~= nil then
+    print("Elements: " ..  #boardElements)
+    print("Board: " .. #Board)
+  elseif(boardElements ~= nil and #boardElements == #Board) then
+    print("equesls")
+  end
+  if boardElements ~= nil and #boardElements ~= 0 and #boardElements == #Board  then
+    textTurn.text = "Won: " .. boardElements[1].mark
+    gameData.turn = boardElements[1].mark
+    itemsInterface:DrawTheLine(itemsGroup, boardElements)
+    gameData.run = false
+    SetupCounter(boardElements[1])
     audio.play(wonSound)
     return true
   end
@@ -104,7 +106,7 @@ local function CheckAllMarksOnBoard()
 
   if Board:IsAllMarksSet() then
     textTurn.text = ("Draw")
-    run = false
+    gameData.run = false
     audio.play( drawSound )
     return true
   end
@@ -116,24 +118,28 @@ local function RetryTapEvent( event )
   itemsInterface:RemoveAllItems()
   Board:CleanBoard()
   --turn = "x"
-  run = true
-  textTurn.text = "Turn: "  .. turn
+  gameData.run = true
+  textTurn.text = "Turn: "  .. gameData.turn
 end
 
 local function tapEvent( event )
-  if run == false then
+  if gameData.run == false then
     return true
   end
 
-  if gameData.isSingle and gameData.firstPlayer ~= turn then
+  if gameData.isSingle and gameData.firstPlayer ~= gameData.turn then
     return true
   end
 
   boardElement = Board:FindElement(event.target.name)
   SetElementToBoard(boardElement)
 
-  textTurn.text = ("Turn: " .. turn)
+  textTurn.text = ("Turn: " .. gameData.turn)
   local isWon = CheckAllMarksOnBoard()
+  if isWon == false and basicAI.isSinglePlayer == true then
+    basicAI.isTurn = true
+  end
+
   return true
 end
 
@@ -170,10 +176,11 @@ local function GoBackToMenu(event)
 end
 
 local function ComputerStep()
-  if basicAI == nil then
-    print("AI is nil")
-  else
-    basicAI.SayHello(basicAI)
+  if gameData.turn == gameData.secondPlayer then
+    print("Computer Step")
+    basicAI:SayHello()
+    textTurn.text = "Turn: "  .. gameData.turn
+    print("ComputerStep After" .. gameData.turn)
   end
 end
 
@@ -211,7 +218,7 @@ function scene:create( event )
     TurnOnOffSound()
 
     textTurn = display.newText(sceneGroup,
-      "Turn: " .. turn,
+      "Turn: " .. gameData.turn,
        display.contentWidth / 2,
        90,
        native.systemFont, 18)
@@ -236,9 +243,8 @@ function scene:create( event )
     basicAI.markUsesByAI = gameData.secondPlayer
     basicAI.isSinglePlayer = gameData.isSingle
     basicAI.isTurn = false
-    print("Parameters: " .. tostring(basicAI.markUsesByAI) .. " : " .. tostring(basicAI.isSinglePlayer) .. " : " .. tostring(basicAI.isTurn))
     if basicAI.isSinglePlayer == true then
-      gameLoopTimer = timer.performWithDelay( 5000, ComputerStep, 1 )
+      gameLoopTimer = timer.performWithDelay( 1000, ComputerStep, 0 )
     end
 end
 
@@ -253,11 +259,6 @@ function scene:show( event )
     elseif ( phase == "did" ) then
         Board:CreateBoard(elementsGroup, tapEvent)
         Board:SetTransaction()
-        if basicAI == nil then
-          print("AI is nil")
-        else
-          print("Everything is fine.")
-        end
         -- Code here runs when the scene is entirely on screen
     end
 end

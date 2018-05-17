@@ -8,7 +8,9 @@ local GameData = {
   isSingle = false,
   firstPlayer = "x",
   secondPlayer = "o",
-  turnOnSound = true
+  turnOnSound = true,
+  turn = "x" or "o", -- could be "x" or "o"
+  run = true
 }
 
 return GameData
