@@ -57,13 +57,13 @@ function Board:MatchElements(boardElement, range, counterForX, counterForO, coun
   return nil
 end
 
-function Board:FindByHorizontal()
+function Board:FindByHorizontal(range)
   for column = 1, #self do
     local counterForX = {}
     local counterForO = {}
     for row = 1 , #self[column] do
       local boardElement = self[column][row]
-      local elements = Board:MatchElements(boardElement, #self,
+      local elements = Board:MatchElements(boardElement, range,
        counterForX, counterForO, row)
       if elements ~= nil then
         return elements
@@ -74,13 +74,13 @@ function Board:FindByHorizontal()
   return nil
 end
 
-function Board:FindByVertical()
+function Board:FindByVertical(range)
   for column = 1, #self do
     local counterForX = {}
     local counterForO = {}
     for row = 1, #self[column] do
       local boardElement = self[row][column]
-      local elements = Board:MatchElements(boardElement, #self,
+      local elements = Board:MatchElements(boardElement, range,
        counterForX, counterForO, row)
       if elements ~= nil then
         return elements
@@ -105,12 +105,12 @@ function Board:FindElement(name)
   end
 end
 
-function Board:FindFromLeftToptoRightBottom()
+function Board:FindFromLeftToptoRightBottom(range)
   local counterForX = {}
   local counterForO = {}
   for i = 1 , #self do
     local boardElement = self[i][i]
-    local elements = Board:MatchElements(boardElement, #self,
+    local elements = Board:MatchElements(boardElement, range,
      counterForX, counterForO, i)
     if elements ~= nil then
       return elements
@@ -119,13 +119,13 @@ function Board:FindFromLeftToptoRightBottom()
   return nil
 end
 
-function Board:FindFromRightToptoBottomLeft()
+function Board:FindFromRightToptoBottomLeft(range)
   local counterForX = {}
   local counterForO = {}
   local row = 1
   for column = #self , 1, -1 do
     local boardElement = self[row][column]
-    local elements = Board:MatchElements(boardElement, #self,
+    local elements = Board:MatchElements(boardElement, range,
      counterForX, counterForO, row)
     if elements ~= nil then
       return elements

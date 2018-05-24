@@ -99,10 +99,10 @@ end
 
 local function CheckAllMarksOnBoard()
 
-  if CheckMarksIndividual(Board:FindByHorizontal()) then return true end
-  if CheckMarksIndividual(Board:FindByVertical()) then return true end
-  if CheckMarksIndividual(Board:FindFromLeftToptoRightBottom()) then return true end
-  if CheckMarksIndividual(Board:FindFromRightToptoBottomLeft()) then return true end
+  if CheckMarksIndividual(Board:FindByHorizontal(#Board)) then return true end
+  if CheckMarksIndividual(Board:FindByVertical(#Board)) then return true end
+  if CheckMarksIndividual(Board:FindFromLeftToptoRightBottom(#Board)) then return true end
+  if CheckMarksIndividual(Board:FindFromRightToptoBottomLeft(#Board)) then return true end
 
   if Board:IsAllMarksSet() then
     textTurn.text = ("Draw")
