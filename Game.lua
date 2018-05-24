@@ -79,12 +79,6 @@ local function SetupCounter(boardElement)
 end
 
 local function CheckMarksIndividual( boardElements )
-  if boardElements ~= nil then
-    print("Elements: " ..  #boardElements)
-    print("Board: " .. #Board)
-  elseif(boardElements ~= nil and #boardElements == #Board) then
-    print("equesls")
-  end
   if boardElements ~= nil and #boardElements ~= 0 and #boardElements == #Board  then
     textTurn.text = "Won: " .. boardElements[1].mark
     gameData.turn = boardElements[1].mark
@@ -178,7 +172,7 @@ end
 local function ComputerStep()
   if gameData.turn == gameData.secondPlayer then
     print("Computer Step")
-    basicAI:SayHello()
+    basicAI:BasicComputer()
     textTurn.text = "Turn: "  .. gameData.turn
     print("ComputerStep After" .. gameData.turn)
   end

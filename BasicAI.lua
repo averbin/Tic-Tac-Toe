@@ -21,7 +21,7 @@ setmetatable( BasicAI, BasicAI.mt)
 function BasicAI:SetupMarkOnBoard()
 end
 
-function BasicAI:SayHello()
+function BasicAI:BasicComputer()
   if gameData.turn == gameData.secondPlayer then
     self.isTurn = false
     print(gameData.turn)
