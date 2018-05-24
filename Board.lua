@@ -65,29 +65,6 @@ function Board:FindByHorizontal()
   return nil
 end
 
-function Board:FindPairByHorizontal()
-  for column = 1, #self do
-    local counterForX = {}
-    local counterForO = {}
-    for row = 1 , #self[column] do
-      local boardElement = self[column][row]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board - 1 then
-          return counterForX -- x win
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board - 1 then
-          return counterForO -- o win.
-        end
-      end
-    end
-  end
-
-  return nil
-end
-
 function Board:FindByVertical()
   for column = 1, #self do
     local counterForX = {}
@@ -102,29 +79,6 @@ function Board:FindByVertical()
       elseif boardElement.mark == "o" then
         counterForO[row] = boardElement
         if #counterForO == #Board then
-          return counterForO
-        end
-      end
-    end
-  end
-
-  return nil
-end
-
-function Board:FindPairByVertical()
-  for column = 1, #self do
-    local counterForX = {}
-    local counterForO = {}
-    for row = 1, #self[column] do
-      local boardElement = self[row][column]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board - 1 then
-          return counterForX
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board - 1 then
           return counterForO
         end
       end
@@ -167,48 +121,7 @@ function Board:FindFromLeftToptoRightBottom()
   return nil
 end
 
-function Board:FindPairFromLeftToptoRightBottom()
-  local counterForX = {}
-  local counterForO = {}
-  for i = 1 , #self do
-    if(self[i][i].mark == "x") then
-      counterForX[i] = self[i][i]
-      if #counterForX == #self - 1 then
-        return counterForX
-      end
-    elseif(self[i][i].mark == "o") then
-      counterForO[i] = self[i][i]
-      if #counterForO == #self - 1 then
-        return counterForO
-      end
-    end
-  end
-  return nil
-end
-
 function Board:FindFromRightToptoBottomLeft()
-  local counterForX = {}
-  local counterForO = {}
-  local row = 1
-  for column = #self , 1, -1 do
-    if(self[row][column].mark == "x") then
-      counterForX[row] = self[row][column]
-      if #counterForX == #self then
-        return counterForX
-      end
-    elseif(self[row][column].mark == "o") then
-      counterForO[row] = self[row][column]
-      if #counterForO == #self then
-        return counterForO
-      end
-    end
-    row = row + 1
-  end
-
-  return nil
-end
-
-function Board:FindPairFromRightToptoBottomLeft()
   local counterForX = {}
   local counterForO = {}
   local row = 1
