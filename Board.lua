@@ -42,22 +42,31 @@ function Board:DeleteElements()
   end
 end
 
+function Board:MatchElements(boardElement, range, counterForX, counterForO, counter)
+  if boardElement.mark == "x" then
+    counterForX[counter] = boardElement
+    if #counterForX == #Board then
+      return counterForX
+    end
+  elseif boardElement.mark == "o" then
+    counterForO[counter] = boardElement
+    if #counterForO == #Board then
+      return counterForO
+    end
+  end
+  return nil
+end
+
 function Board:FindByHorizontal()
   for column = 1, #self do
     local counterForX = {}
     local counterForO = {}
     for row = 1 , #self[column] do
       local boardElement = self[column][row]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board then
-          return counterForX -- x win
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board then
-          return counterForO -- o win.
-        end
+      local elements = Board:MatchElements(boardElement, #self,
+       counterForX, counterForO, row)
+      if elements ~= nil then
+        return elements
       end
     end
   end
@@ -71,16 +80,10 @@ function Board:FindByVertical()
     local counterForO = {}
     for row = 1, #self[column] do
       local boardElement = self[row][column]
-      if boardElement.mark == "x" then
-        counterForX[row] = boardElement
-        if #counterForX == #Board then
-          return counterForX
-        end
-      elseif boardElement.mark == "o" then
-        counterForO[row] = boardElement
-        if #counterForO == #Board then
-          return counterForO
-        end
+      local elements = Board:MatchElements(boardElement, #self,
+       counterForX, counterForO, row)
+      if elements ~= nil then
+        return elements
       end
     end
   end
@@ -106,16 +109,11 @@ function Board:FindFromLeftToptoRightBottom()
   local counterForX = {}
   local counterForO = {}
   for i = 1 , #self do
-    if(self[i][i].mark == "x") then
-      counterForX[i] = self[i][i]
-      if #counterForX == #self then
-        return counterForX
-      end
-    elseif(self[i][i].mark == "o") then
-      counterForO[i] = self[i][i]
-      if #counterForO == #self then
-        return counterForO
-      end
+    local boardElement = self[i][i]
+    local elements = Board:MatchElements(boardElement, #self,
+     counterForX, counterForO, i)
+    if elements ~= nil then
+      return elements
     end
   end
   return nil
@@ -126,16 +124,11 @@ function Board:FindFromRightToptoBottomLeft()
   local counterForO = {}
   local row = 1
   for column = #self , 1, -1 do
-    if(self[row][column].mark == "x") then
-      counterForX[row] = self[row][column]
-      if #counterForX == #self then
-        return counterForX
-      end
-    elseif(self[row][column].mark == "o") then
-      counterForO[row] = self[row][column]
-      if #counterForO == #self then
-        return counterForO
-      end
+    local boardElement = self[row][column]
+    local elements = Board:MatchElements(boardElement, #self,
+     counterForX, counterForO, row)
+    if elements ~= nil then
+      return elements
     end
     row = row + 1
   end
