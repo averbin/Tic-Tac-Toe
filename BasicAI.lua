@@ -18,14 +18,20 @@ BasicAI.prototype = { markUsesByAI = "o",
 BasicAI.mt = {}
 setmetatable( BasicAI, BasicAI.mt)
 
-function BasicAI:SetupMarkOnBoard()
+function BasicAI:FindElementUseRandom()
+  while true do
+    local element = board:FindElement(math.random(1, 9))
+    if element ~= nil and element.mark == "" then
+      return element
+    end
+  end
 end
 
 function BasicAI:BasicComputer()
-  if gameData.turn == gameData.secondPlayer then
+  if gameData.turn == gameData.secondPlayer and gameData.run == true then
     self.isTurn = false
     print(gameData.turn)
-    gameData.turn = "x"
+    return self.FindElementUseRandom()
   end
 end
 

@@ -170,11 +170,12 @@ local function GoBackToMenu(event)
 end
 
 local function ComputerStep()
-  if gameData.turn == gameData.secondPlayer then
+  if gameData.run == true and gameData.turn == gameData.secondPlayer then
     print("Computer Step")
-    basicAI:BasicComputer()
+    local element = basicAI:BasicComputer()
+    SetElementToBoard(element)
+    CheckAllMarksOnBoard()
     textTurn.text = "Turn: "  .. gameData.turn
-    print("ComputerStep After" .. gameData.turn)
   end
 end
 
