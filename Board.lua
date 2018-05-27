@@ -45,12 +45,12 @@ end
 function Board:MatchElements(boardElement, range, counterForX, counterForO, counter)
   if boardElement.mark == "x" then
     counterForX[counter] = boardElement
-    if #counterForX == #Board then
+    if #counterForX == range then
       return counterForX
     end
   elseif boardElement.mark == "o" then
     counterForO[counter] = boardElement
-    if #counterForO == #Board then
+    if #counterForO == range then
       return counterForO
     end
   end
