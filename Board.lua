@@ -151,6 +151,21 @@ function Board:IsAllMarksSet()
   return false
 end
 
+function Board:IsAllMarksSetOnRow(rowNum)
+  local counter = 0
+
+  for i = 1, #self do
+    if self[rowNum][i].mark ~= "" then
+      counter = counter + 1
+    end
+  end
+
+  if counter == #self then
+    return true
+  end
+  return false
+end
+
 function Board:SetTransaction()
   local counter = 5
   for i = 1, #self do
