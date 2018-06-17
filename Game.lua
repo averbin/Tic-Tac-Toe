@@ -134,6 +134,14 @@ local function tapEvent( event )
     basicAI.isTurn = true
   end
 
+  if Board:IsAllMarksSetOnRow(1) then
+    print("We have set row 1")
+  end
+
+  if Board:IsAllMarksSetOnColumn(1) then
+    print("We have set column 1")
+  end
+
   return true
 end
 
@@ -172,7 +180,7 @@ end
 local function ComputerStep()
   if gameData.run == true and gameData.turn == gameData.secondPlayer then
     print("Computer Step")
-    local element = basicAI:BasicComputer()
+    local element = basicAI:ComputerStep()
     SetElementToBoard(element)
     CheckAllMarksOnBoard()
     textTurn.text = "Turn: "  .. gameData.turn

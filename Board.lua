@@ -74,6 +74,26 @@ function Board:FindByHorizontal(range)
   return nil
 end
 
+function Board:FindByHorizontalPair(row, mark)
+  local line = Board[row]
+  local count = 0
+  local pair = {}
+  for i = 1, #line do
+    if line[i].mark == mark then
+      count = count + 1
+      pair[count] = line[i]
+      if #pair == #line - 1 then
+        return pair
+      end
+    end
+  end
+  return nil
+end
+
+function Board:FindByVerticalPair()
+
+end
+
 function Board:FindByVertical(range)
   for column = 1, #self do
     local counterForX = {}
@@ -156,6 +176,21 @@ function Board:IsAllMarksSetOnRow(rowNum)
 
   for i = 1, #self do
     if self[rowNum][i].mark ~= "" then
+      counter = counter + 1
+    end
+  end
+
+  if counter == #self then
+    return true
+  end
+  return false
+end
+
+function Board:IsAllMarksSetOnColumn(columnNum)
+  local counter = 0
+
+  for i = 1, #self do
+    if self[i][columnNum].mark ~= "" then
       counter = counter + 1
     end
   end

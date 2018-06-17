@@ -18,41 +18,54 @@ BasicAI.prototype = { markUsesByAI = "o",
 BasicAI.mt = {}
 setmetatable( BasicAI, BasicAI.mt)
 
-function BasicAI:FindElementUseRandom()
+function BasicAI:ComputerStep()
+  if gameData.turn == gameData.secondPlayer and gameData.run == true then
+    self.isTurn = false
+    print(gameData.turn)
+    return self.DefenderAI()
+  end
+end
+
+function BasicAI:DefenderAI()
+  local element = nil
+  -- find first player pairs.
+  element = BasicAI:FindPairElements()
+  if element == nil then
+    element = BasicAI:PrimitiveAI()
+  end
+
+  return element
+end
+
+function BasicAI:FindPairElements()
+  local pairElements = nil
+  local element = nil
+  for i = 1 , #board do
+    if board:IsAllMarksSetOnRow(i) == false then
+      pairElements = board:FindByHorizontalPair(i, gameData.firstPlayer)
+      if pairElements ~= nil and #pairElements ~= 0 then
+        while true do
+          local startElement = board[i][1].element.name
+          local endElement = board[i][#board].element.name
+          element = board:FindElement(math.random(startElement, endElement))
+          if element ~= nil and element.mark == "" then
+            return element
+          end
+        end
+      end
+    end
+  end
+
+  return element
+end
+
+function BasicAI:PrimitiveAI()
+  -- Based on random.
   while true do
     local element = board:FindElement(math.random(1, 9))
     if element ~= nil and element.mark == "" then
       return element
     end
-  end
-end
-
-function BasicAI:FindPairElements()
-  local range = #board - 1
-  local pairElements = board:FindByHorizontal(range)
-  if pairElements == nil then
-    print("no pairs")
-    return nil
-  else
-    print("pairs")
-  end
-
-  if pairElements[1] ~= nil then
-    -- find whitch mark and set element.
-    print("Match pair: " .. pairElements[1].mark)
-    if pairElements[1].mark == gameData.firstPlayer then
-      
-    end
-  end
-
-end
-
-function BasicAI:BasicComputer()
-  if gameData.turn == gameData.secondPlayer and gameData.run == true then
-    self.isTurn = false
-    print(gameData.turn)
-    self.FindPairElements()
-    return self.FindElementUseRandom()
   end
 end
 
