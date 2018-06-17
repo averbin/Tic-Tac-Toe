@@ -37,7 +37,7 @@ function BasicAI:DefenderAI()
   return element
 end
 
-function BasicAI:FindPairElements()
+function BasicAI:FindElementHorizontal()
   local pairElements = nil
   local element = nil
   for i = 1 , #board do
@@ -56,6 +56,35 @@ function BasicAI:FindPairElements()
     end
   end
 
+  return element
+end
+
+function BasicAI:FindElementVertical()
+  local pairElement = nil
+  local element = nil
+
+  for i = 1 , #board do
+    if board:IsAllMarksSetOnColumn(i) == false then
+      pairElements = board:FindByVerticalPair(i, gameData.firstPlayer)
+      local line = board:GetVerticalLine(i)
+      if pairElements ~= nil and #pairElements ~= 0 then
+        for i = 1, #line do
+          if line[i].mark == "" then
+            element = board:FindElement(line[i].element.name)
+          end
+        end
+      end
+    end
+  end
+
+  return element
+end
+
+function BasicAI:FindPairElements()
+  local element = BasicAI:FindElementHorizontal()
+  if element == nil then
+    element = BasicAI:FindElementVertical()
+  end
   return element
 end
 

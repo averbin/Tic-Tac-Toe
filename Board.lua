@@ -90,8 +90,33 @@ function Board:FindByHorizontalPair(row, mark)
   return nil
 end
 
-function Board:FindByVerticalPair()
+function Board:GetVerticalLine(column)
+  local line = {}
+  for row = 1, #self do
+    line[row] = self[row][column]
+  end
+  return line
+end
 
+function Board:FindByVerticalPair(column, mark)
+  -- Find Vertical Line
+  local line = Board:GetVerticalLine(column)
+  for i = 1, #line do
+    io.write("\nNumElement: " .. i .. "\tNum: " .. line[i].element.name .. "\n")
+  end
+
+  local count = 0
+  local pair = {}
+  for i = 1, #line do
+    if line[i].mark == mark then
+      count = count + 1
+      pair[count] = line[i]
+      if #pair == #line - 1 then
+        return pair
+      end
+    end
+  end
+  return nil
 end
 
 function Board:FindByVertical(range)
