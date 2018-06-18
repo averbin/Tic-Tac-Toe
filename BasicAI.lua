@@ -80,11 +80,64 @@ function BasicAI:FindElementVertical()
   return element
 end
 
+function BasicAI:FindElementLeftTopRightBottom()
+  local element = nil
+  if board:IsAllMarksSetOnLeftTopRightBottom() == true then
+    return element
+  end
+
+  local line = board:GetLeftTopRightBottomLine()
+  pairElements = board:FindFromLeftTopRightBottomPair(
+    line, gameData.firstPlayer)
+
+  if pairElements ~= nil and #pairElements ~= 0 then
+
+    for i = 1, #line do
+      if line[i].mark == "" then
+        element = board:FindElement(line[i].element.name)
+      end
+    end
+  end
+
+  return element
+end
+
+function BasicAI:FindElementRightTopLeftBottom()
+  local element = nil
+  if board:IsAllMarksSetOnRightTopLeftBottom() == true then
+    return element
+  end
+
+  local line = board:GetRightTopleftBottomLine()
+  pairElements = board:FindFromRightToptoBottomLeftPair(
+    line, gameData.firstPlayer)
+
+  if pairElements ~= nil and #pairElements ~= 0 then
+
+    for i = 1, #line do
+      if line[i].mark == "" then
+        element = board:FindElement(line[i].element.name)
+      end
+    end
+  end
+
+  return element
+end
+
 function BasicAI:FindPairElements()
   local element = BasicAI:FindElementHorizontal()
   if element == nil then
     element = BasicAI:FindElementVertical()
   end
+
+  if element == nil then
+    element = BasicAI:FindElementLeftTopRightBottom()
+  end
+
+  if element == nil then
+    element = BasicAI:FindElementRightTopLeftBottom()
+  end
+  
   return element
 end
 

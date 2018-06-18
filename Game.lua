@@ -182,8 +182,8 @@ local function ComputerStep()
     print("Computer Step")
     local element = basicAI:ComputerStep()
     SetElementToBoard(element)
-    CheckAllMarksOnBoard()
     textTurn.text = "Turn: "  .. gameData.turn
+    CheckAllMarksOnBoard()
   end
 end
 

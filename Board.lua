@@ -90,33 +90,33 @@ function Board:FindByHorizontalPair(row, mark)
   return nil
 end
 
+function Board:GetLeftTopRightBottomLine()
+  local line = {}
+
+  for index = 1 , #self do
+    line[index] = self[index][index]
+  end
+
+  return line
+end
+
+function Board:GetRightTopleftBottomLine()
+  local line = {}
+  local row = 1
+  for column = #self , 1, -1 do
+    line[column] = self[row][column]
+    row = row + 1
+  end
+
+  return line
+end
+
 function Board:GetVerticalLine(column)
   local line = {}
   for row = 1, #self do
     line[row] = self[row][column]
   end
   return line
-end
-
-function Board:FindByVerticalPair(column, mark)
-  -- Find Vertical Line
-  local line = Board:GetVerticalLine(column)
-  for i = 1, #line do
-    io.write("\nNumElement: " .. i .. "\tNum: " .. line[i].element.name .. "\n")
-  end
-
-  local count = 0
-  local pair = {}
-  for i = 1, #line do
-    if line[i].mark == mark then
-      count = count + 1
-      pair[count] = line[i]
-      if #pair == #line - 1 then
-        return pair
-      end
-    end
-  end
-  return nil
 end
 
 function Board:FindByVertical(range)
@@ -133,6 +133,23 @@ function Board:FindByVertical(range)
     end
   end
 
+  return nil
+end
+
+function Board:FindByVerticalPair(column, mark)
+  -- Find Vertical Line
+  local line = Board:GetVerticalLine(column)
+  local count = 0
+  local pair = {}
+  for i = 1, #line do
+    if line[i].mark == mark then
+      count = count + 1
+      pair[count] = line[i]
+      if #pair == #line - 1 then
+        return pair
+      end
+    end
+  end
   return nil
 end
 
@@ -164,6 +181,25 @@ function Board:FindFromLeftToptoRightBottom(range)
   return nil
 end
 
+function Board:FindFromLeftTopRightBottomPair(line, mark)
+  local count = 0
+  local pair = {}
+
+  for i = 1, #line do
+    print("Element: " .. i .. "\tMark: " .. line[i].mark)
+  end
+  for i = 1, #line do
+    if line[i].mark == mark then
+      count = count + 1
+      pair[count] = line[i]
+      if #pair == #line - 1 then
+        return pair
+      end
+    end
+  end
+  return nil
+end
+
 function Board:FindFromRightToptoBottomLeft(range)
   local counterForX = {}
   local counterForO = {}
@@ -178,6 +214,25 @@ function Board:FindFromRightToptoBottomLeft(range)
     row = row + 1
   end
 
+  return nil
+end
+
+function Board:FindFromRightToptoBottomLeftPair(line, mark)
+  local count = 0
+  local pair = {}
+
+  for i = 1, #line do
+    print("Element: " .. i .. "\tMark: " .. line[i].mark)
+  end
+  for i = 1, #line do
+    if line[i].mark == mark then
+      count = count + 1
+      pair[count] = line[i]
+      if #pair == #line - 1 then
+        return pair
+      end
+    end
+  end
   return nil
 end
 
@@ -218,6 +273,39 @@ function Board:IsAllMarksSetOnColumn(columnNum)
     if self[i][columnNum].mark ~= "" then
       counter = counter + 1
     end
+  end
+
+  if counter == #self then
+    return true
+  end
+  return false
+end
+
+function Board:IsAllMarksSetOnLeftTopRightBottom()
+  local counter = 0
+
+  for i = 1, #self do
+    if self[i][i].mark ~= "" then
+      counter = counter + 1
+    end
+  end
+
+  if counter == #self then
+    return true
+  end
+  return false
+end
+
+function Board:IsAllMarksSetOnRightTopLeftBottom()
+  local counter = 0
+
+  local row = 1
+  for column = #self , 1, -1 do
+    local boardElement = self[row][column]
+    if boardElement.mark ~= "" then
+      counter = counter + 1
+    end
+    row = row + 1
   end
 
   if counter == #self then
