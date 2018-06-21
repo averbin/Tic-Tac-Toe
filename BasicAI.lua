@@ -21,28 +21,45 @@ setmetatable( BasicAI, BasicAI.mt)
 function BasicAI:ComputerStep()
   if gameData.turn == gameData.secondPlayer and gameData.run == true then
     self.isTurn = false
-    print(gameData.turn)
-    return self.DefenderAI()
+
+    local element = self.Attacker()
+
+    if element == nil then
+      element = BasicAI:PrimitiveAI()
+    end
+
+    return element
+
   end
 end
 
-function BasicAI:DefenderAI()
+function BasicAI:Attacker()
+  local elementDef = BasicAI:DefenderAI()
   local element = nil
-  -- find first player pairs.
-  element = BasicAI:FindPairElements()
+
+  element = BasicAI:FindElementForAttack()
+
   if element == nil then
-    element = BasicAI:PrimitiveAI()
+    element = elementDef
   end
 
   return element
 end
 
-function BasicAI:FindElementHorizontal()
+function BasicAI:DefenderAI()
+  local element = nil
+  -- find first player pairs.
+  element = BasicAI:FindElementForProtection()
+
+  return element
+end
+
+function BasicAI:FindElementHorizontal(mark)
   local pairElements = nil
   local element = nil
   for i = 1 , #board do
     if board:IsAllMarksSetOnRow(i) == false then
-      pairElements = board:FindByHorizontalPair(i, gameData.firstPlayer)
+      pairElements = board:FindByHorizontalPair(i, mark)
       if pairElements ~= nil and #pairElements ~= 0 then
         while true do
           local startElement = board[i][1].element.name
@@ -59,13 +76,13 @@ function BasicAI:FindElementHorizontal()
   return element
 end
 
-function BasicAI:FindElementVertical()
+function BasicAI:FindElementVertical(mark)
   local pairElement = nil
   local element = nil
 
   for i = 1 , #board do
     if board:IsAllMarksSetOnColumn(i) == false then
-      pairElements = board:FindByVerticalPair(i, gameData.firstPlayer)
+      pairElements = board:FindByVerticalPair(i, mark)
       local line = board:GetVerticalLine(i)
       if pairElements ~= nil and #pairElements ~= 0 then
         for i = 1, #line do
@@ -80,7 +97,7 @@ function BasicAI:FindElementVertical()
   return element
 end
 
-function BasicAI:FindElementLeftTopRightBottom()
+function BasicAI:FindElementLeftTopRightBottom(mark)
   local element = nil
   if board:IsAllMarksSetOnLeftTopRightBottom() == true then
     return element
@@ -88,7 +105,7 @@ function BasicAI:FindElementLeftTopRightBottom()
 
   local line = board:GetLeftTopRightBottomLine()
   pairElements = board:FindFromLeftTopRightBottomPair(
-    line, gameData.firstPlayer)
+    line, mark)
 
   if pairElements ~= nil and #pairElements ~= 0 then
 
@@ -102,7 +119,7 @@ function BasicAI:FindElementLeftTopRightBottom()
   return element
 end
 
-function BasicAI:FindElementRightTopLeftBottom()
+function BasicAI:FindElementRightTopLeftBottom(mark)
   local element = nil
   if board:IsAllMarksSetOnRightTopLeftBottom() == true then
     return element
@@ -110,7 +127,7 @@ function BasicAI:FindElementRightTopLeftBottom()
 
   local line = board:GetRightTopleftBottomLine()
   pairElements = board:FindFromRightToptoBottomLeftPair(
-    line, gameData.firstPlayer)
+    line, mark)
 
   if pairElements ~= nil and #pairElements ~= 0 then
 
@@ -124,20 +141,40 @@ function BasicAI:FindElementRightTopLeftBottom()
   return element
 end
 
-function BasicAI:FindPairElements()
-  local element = BasicAI:FindElementHorizontal()
+function BasicAI:FindElementForAttack()
+  local element = nil
+
+  element = BasicAI:FindElementHorizontal(gameData.secondPlayer)
+
   if element == nil then
-    element = BasicAI:FindElementVertical()
+    element = BasicAI:FindElementVertical(gameData.secondPlayer)
   end
 
   if element == nil then
-    element = BasicAI:FindElementLeftTopRightBottom()
+    element = BasicAI:FindElementLeftTopRightBottom(gameData.secondPlayer)
   end
 
   if element == nil then
-    element = BasicAI:FindElementRightTopLeftBottom()
+    element = BasicAI:FindElementRightTopLeftBottom(gameData.secondPlayer)
   end
-  
+
+  return element
+end
+
+function BasicAI:FindElementForProtection()
+  local element = BasicAI:FindElementHorizontal(gameData.firstPlayer)
+  if element == nil then
+    element = BasicAI:FindElementVertical(gameData.firstPlayer)
+  end
+
+  if element == nil then
+    element = BasicAI:FindElementLeftTopRightBottom(gameData.firstPlayer)
+  end
+
+  if element == nil then
+    element = BasicAI:FindElementRightTopLeftBottom(gameData.firstPlayer)
+  end
+
   return element
 end
 
