@@ -218,7 +218,6 @@ function scene:create( event )
     soundImage.x = menuButton.x - soundImage.width - 10
     soundImage.y = menuButton.y
     soundImage:addEventListener("tap", TurnOnOffSound)
-    TurnOnOffSound()
 
     textTurn = display.newText(sceneGroup,
       "Turn: " .. gameData.turn,
