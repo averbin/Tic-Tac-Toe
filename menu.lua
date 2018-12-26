@@ -45,8 +45,8 @@ function scene:create( event )
 
     local function gotoPlayMode( event )
         playText:setFillColor(1.0, 1.0, 1.0)
-        composer.removeScene( "playMenu")
-        composer.gotoScene( "playMenu", { time=800, effect="crossFade" })
+        composer.removeScene( "playMode")
+        composer.gotoScene( "playMode", { time=800, effect="crossFade" })
     end
     sceneGroup:addEventListener("tap", gotoPlayMode)
 
