@@ -14,22 +14,12 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local title = nil
 local playText = nil
-local playRectungle = nil
 local gameLoopTimer = nil
 local creatorText = nil
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
-local function GotoPlayScene( event )
-  --if event.phase == "will" then
-    playText:setFillColor(1.0, 1.0, 1.0)
-  --elseif event.phase == "did" then
-    composer.removeScene( "playMenu")
-    composer.gotoScene( "playMenu", { time=800, effect="crossFade" })
-  --end
-end
 
 local function VisualEffectForText( event )
   if playText ~= nil and playText.alpha >= 1 then
@@ -53,10 +43,12 @@ function scene:create( event )
     display.contentCenterY + 80, native.systemFont, 20)
     playText:setFillColor(255, 239, 0)
 
-    playRectungle = display.newRect(sceneGroup, 0, 0,
-      display.contentWidth * 2, display.contentHeight * 2)
-    playRectungle.alpha = 0.01
-    playRectungle:addEventListener("tap", GotoPlayScene)
+    local function gotoPlayMode( event )
+        playText:setFillColor(1.0, 1.0, 1.0)
+        composer.removeScene( "playMenu")
+        composer.gotoScene( "playMenu", { time=800, effect="crossFade" })
+    end
+    sceneGroup:addEventListener("tap", gotoPlayMode)
 
     creatorText = display.newText(sceneGroup, "Made by Alexander Verbin",
       display.contentCenterX,
