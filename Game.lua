@@ -27,7 +27,8 @@ local circleSound = nil
 local wonSound = nil
 local drawSound = nil
 local menuButton = nil
-local soundImage = nil
+local soundOn = nil
+local soundOff = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -159,15 +160,16 @@ end
 
 local function TurnOnOffSound()
   if gameData.turnOnSound then
+    soundOn.isVisible = false
+    soundOff.isVisible = true
     gameData.turnOnSound = false
     audio.setVolume(0.0)
-    soundImage = SwapImage(soundImage, "res/img/turnOffSound.png")
   else
     gameData.turnOnSound = true
+    soundOn.isVisible = true
+    soundOff.isVisible = false
     audio.setVolume(1)
-    soundImage = SwapImage(soundImage, "res/img/turnOnSound.png")
   end
-  soundImage:addEventListener("tap", TurnOnOffSound)
 end
 
 local function GoBackToMenu(event)
@@ -214,10 +216,15 @@ function scene:create( event )
     menuButton.x = display.contentWidth - 50
     menuButton.y = 30
 
-    soundImage = display.newImageRect( sceneGroup, "res/img/turnOnSound.png", 30, 30)
-    soundImage.x = menuButton.x - soundImage.width - 10
-    soundImage.y = menuButton.y
-    soundImage:addEventListener("tap", TurnOnOffSound)
+    soundOn = display.newImageRect( sceneGroup, "res/img/turnOnSound.png", 30, 30)
+    soundOn.x = menuButton.x - soundOn.width - 10
+    soundOn.y = menuButton.y
+    soundOn:addEventListener("tap", TurnOnOffSound)
+
+    soundOff = display.newImageRect( sceneGroup, "res/img/turnOffSound.png", 30, 30)
+    soundOff.x = menuButton.x - soundOff.width - 10
+    soundOff.y = menuButton.y
+    soundOff:addEventListener("tap", TurnOnOffSound)
 
     textTurn = display.newText(sceneGroup,
       "Turn: " .. gameData.turn,
@@ -257,6 +264,13 @@ function scene:show( event )
     local phase = event.phase
 
     if ( phase == "will" ) then
+        if gameData.turnOnSound then
+          soundOn.isVisible = true
+          soundOff.isVisible = false
+        else
+          soundOn.isVisible = false
+          soundOff.isVisible = true
+        end
         -- Code here runs when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
         Board:CreateBoard(elementsGroup, tapEvent)
@@ -280,7 +294,8 @@ function scene:hide( event )
         Board:CleanBoard()
         Board:DeleteElements()
         menuButton:removeSelf()
-        soundImage:removeSelf()
+        soundOn:removeSelf()
+        soundOff:removeSelf()
         retryButton:removeSelf()
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
