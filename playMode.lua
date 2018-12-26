@@ -22,6 +22,7 @@ function GoBackToMenu()
   composer.removeScene("menu")
   composer.gotoScene("menu", { time=800, effect="crossFade"})
   backToMenuText:setFillColor(1, 1, 1)
+  backToMenuText:removeSelf()
 end
 
 function GoOnePlayerMode( event )
@@ -29,6 +30,7 @@ function GoOnePlayerMode( event )
     gameData.isSingle = true
     composer.removeScene("Game")
     composer.gotoScene("Game", { time=800, effect="crossFade"})
+    backToMenuText:removeSelf()
   end
 end
 
@@ -37,6 +39,7 @@ function GoTwoPlayersMode(event)
     gameData.isSingle = false
     composer.removeScene("Game")
     composer.gotoScene("Game", { time=800, effect="crossFade"})
+    backToMenuText:removeSelf()
   end
 end
 
