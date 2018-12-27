@@ -79,6 +79,18 @@ local function SetupCounter(boardElement)
   SetUpTexts()
 end
 
+-- Sleeps for x milliseconds
+function usleep(nMilliseconds)
+  local nStartTime = system.getTimer()
+  local nEndTime = nStartTime + nMilliseconds
+
+  while true do
+      if system.getTimer() >= nEndTime then
+          break
+      end
+  end
+end
+
 local function CheckMarksIndividual( boardElements )
   if boardElements ~= nil and #boardElements ~= 0 and #boardElements == #Board  then
     textTurn.text = "Won: " .. boardElements[1].mark
@@ -115,6 +127,9 @@ local function RetryTapEvent( event )
   --turn = "x"
   gameData.run = true
   textTurn.text = "Turn: "  .. gameData.turn
+  local oldPlace = Board:MoveOffScreen(display.contentHeight + 50)
+  usleep(500)
+  Board:MoveFromTop(oldPlace)
 end
 
 local function tapEvent( event )
