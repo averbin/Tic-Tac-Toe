@@ -297,6 +297,7 @@ function scene:hide( event )
         soundOn:removeSelf()
         soundOff:removeSelf()
         retryButton:removeSelf()
+        timer.cancel(gameLoopTimer)
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
     end
