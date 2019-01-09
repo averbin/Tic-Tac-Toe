@@ -76,6 +76,15 @@ local function SetupCounter(boardElement)
     secondPlayerCounter = 0
   end
 
+  if gameData.isSingle then
+     if firstPlayerCounter <= 5 then
+       basicAI.difficulty = "easy"
+     elseif firstPlayerCounter <= 10 then
+       basicAI.difficulty = "normal"
+     else
+       basicAI.difficulty = "hard"
+     end
+  end
   SetUpTexts()
 end
 

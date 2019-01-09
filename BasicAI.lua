@@ -21,8 +21,18 @@ setmetatable( BasicAI, BasicAI.mt)
 function BasicAI:ComputerStep()
   if gameData.turn == gameData.secondPlayer and gameData.run == true then
     self.isTurn = false
-    --TODO: difficulty mode
-    local element = self.Attacker()
+
+    local element = nil
+    if self.difficulty == "easy" then
+      print("Easy Mode")
+      element = self.PrimitiveAI()
+    elseif self.difficulty == "normal" then
+      print("Normal Mode")
+      element = self.DefenderAI()
+    else
+      print("Hard Mode")
+      element = self.Attacker()
+    end
 
     if element == nil then
       element = BasicAI:PrimitiveAI()
