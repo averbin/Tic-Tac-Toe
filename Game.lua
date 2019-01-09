@@ -54,6 +54,13 @@ local function SetElementToBoard(boardElement)
   end
 end
 
+local function Clean()
+  itemsInterface:RemoveAllItems()
+  Board:CleanBoard()
+  gameData.run = true
+  textTurn.text = "Turn: "  .. gameData.turn
+end
+
 local function SetUpTexts()
   firstPlayerText.text = "Player1 (" .. gameData.firstPlayer .. "): " .. tostring(firstPlayerCounter)
   local whoPlayText = ""
@@ -147,16 +154,14 @@ local function CheckAllMarksOnBoard()
 end
 
 local function RetryTapEvent( event )
-  itemsInterface:RemoveAllItems()
-  Board:CleanBoard()
-  gameData.run = true
-  textTurn.text = "Turn: "  .. gameData.turn
+  Clean()
 end
 
 local function tapEvent( event )
   if gameData.isSingle and gameData.run == false then
     print("error: game doesn't run!")
-    gameData.run = true
+    return false
+    --gameData.run = true
   end
 
   if gameData.isSingle and gameData.firstPlayer ~= gameData.turn then
