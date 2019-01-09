@@ -29,6 +29,7 @@ local drawSound = nil
 local menuButton = nil
 local soundOn = nil
 local soundOff = nil
+local computerImage = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -64,6 +65,18 @@ local function SetUpTexts()
   secondPlayerText.text = whoPlayText .. gameData.secondPlayer .. "): " .. tostring(secondPlayerCounter)
 end
 
+local function SwapImage(oldImage, pathToImage)
+  if oldImage ~= nil then
+    local currentImage = display.newImageRect(
+      oldImage.parent,
+      pathToImage, oldImage.width, oldImage.height)
+      currentImage.x = oldImage.x
+      currentImage.y = oldImage.y
+      oldImage:removeSelf()
+      return currentImage
+  end
+end
+
 local function SetupCounter(boardElement)
   if boardElement ~= nil and boardElement.mark == gameData.firstPlayer then
     firstPlayerCounter = firstPlayerCounter + 1
@@ -77,12 +90,15 @@ local function SetupCounter(boardElement)
   end
 
   if gameData.isSingle then
-     if firstPlayerCounter <= 5 then
+     if (firstPlayerCounter - secondPlayerCounter) <= 5 then
        basicAI.difficulty = "easy"
-     elseif firstPlayerCounter <= 10 then
+       computerImage = SwapImage(computerImage, "res/img/easy.png")
+     elseif (firstPlayerCounter - secondPlayerCounter) <= 10 then
        basicAI.difficulty = "normal"
+       computerImage = SwapImage(computerImage, "res/img/normal.png")
      else
        basicAI.difficulty = "hard"
+       computerImage = SwapImage(computerImage, "res/img/hard.png")
      end
   end
   SetUpTexts()
@@ -159,17 +175,6 @@ local function tapEvent( event )
   return true
 end
 
-local function SwapImage(oldImage, pathToImage)
-  if oldImage ~= nil then
-    local currentImage = display.newImageRect(
-      oldImage.parent,
-      pathToImage, oldImage.width, oldImage.height)
-      currentImage.x = oldImage.x
-      currentImage.y = oldImage.y
-      oldImage:removeSelf()
-      return currentImage
-  end
-end
 
 local function TurnOnOffSound()
   if gameData.turnOnSound then
@@ -255,6 +260,20 @@ function scene:create( event )
     "",
     display.contentWidth - 70, textTurn.y, native.systemFont, 12)
     secondPlayerText:setFillColor(255, 239, 0)
+
+    if gameData.isSingle then
+      local computerImagePath = nil
+      if basicAI.difficulty == "easy" then
+        computerImagePath = "res/img/easy.png"
+      elseif basicAI.difficulty == "normal" then
+        computerImagePath = "res/img/normal.png"
+      else
+        computerImagePath = "res/img/hard.png"
+      end
+      computerImage = display.newImageRect( sceneGroup, "res/img/easy.png", 30, 30)
+      computerImage.x = soundOff.x
+      computerImage.y = secondPlayerText.y - computerImage.height + 5
+    end
     SetUpTexts()
 
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
