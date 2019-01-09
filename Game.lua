@@ -124,17 +124,14 @@ end
 local function RetryTapEvent( event )
   itemsInterface:RemoveAllItems()
   Board:CleanBoard()
-  --turn = "x"
   gameData.run = true
   textTurn.text = "Turn: "  .. gameData.turn
-  local oldPlace = Board:MoveOffScreen(display.contentHeight + 50)
-  usleep(500)
-  Board:MoveFromTop(oldPlace)
 end
 
 local function tapEvent( event )
-  if gameData.run == false then
-    return true
+  if gameData.isSingle and gameData.run == false then
+    print("error: game doesn't run!")
+    gameData.run = true
   end
 
   if gameData.isSingle and gameData.firstPlayer ~= gameData.turn then
@@ -148,14 +145,6 @@ local function tapEvent( event )
   local isWon = CheckAllMarksOnBoard()
   if isWon == false and basicAI.isSinglePlayer == true then
     basicAI.isTurn = true
-  end
-
-  if Board:IsAllMarksSetOnRow(1) then
-    print("We have set row 1")
-  end
-
-  if Board:IsAllMarksSetOnColumn(1) then
-    print("We have set column 1")
   end
 
   return true
@@ -268,6 +257,7 @@ function scene:create( event )
     basicAI.isSinglePlayer = gameData.isSingle
     basicAI.isTurn = false
     if basicAI.isSinglePlayer == true then
+      basicAI.isTurn = gameData.turn
       gameLoopTimer = timer.performWithDelay( 1000, ComputerStep, 0 )
     end
 end
@@ -289,8 +279,6 @@ function scene:show( event )
         -- Code here runs when the scene is still off screen (but is about to come on screen)
     elseif ( phase == "did" ) then
         Board:CreateBoard(elementsGroup, tapEvent)
-        Board:SetTransaction()
-        -- Code here runs when the scene is entirely on screen
     end
 end
 
@@ -312,7 +300,9 @@ function scene:hide( event )
         soundOn:removeSelf()
         soundOff:removeSelf()
         retryButton:removeSelf()
-        timer.cancel(gameLoopTimer)
+        if gameLoopTimer ~= nil then
+          timer.cancel(gameLoopTimer)
+        end
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
     end

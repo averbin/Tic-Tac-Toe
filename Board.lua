@@ -1,5 +1,6 @@
 local BoardElement = require "BoardElement"
 local Board = {{},{},{}}
+local startPlace = {{}}
 Board.mt = {}
 setmetatable(Board, Board.mt)
 
@@ -312,58 +313,6 @@ function Board:IsAllMarksSetOnRightTopLeftBottom()
     return true
   end
   return false
-end
-
-function Board:SetTransaction()
-  local counter = 5
-  for i = 1, #self do
-    for j = 1 , #self[i] do
-        local placeToGo = self[i][j].element.y
-        self[i][j].element.y = 0
-        transition.to( self[i][j].element, { time = counter, y = placeToGo, transition=easing.outQuint  } )
-        counter = counter + counter
-    end
-  end
-end
-
-function Board:MoveFromTop(oldPlace)
-  for i = 1, #oldPlace do
-    for j = 1, #oldPlace[i] do
-      print("----------------")
-      print(oldPlace[i][j].x)
-      print(oldPlace[i][j].y)
-      print("----------------")
-    end
-  end
-  local counter = 5
-  for i = 1, #self do
-    for j = 1 , #self[i] do
-        local placeToGo = self[i][j].element.y--{ oldPlace[i][j].x , oldPlace[i][j].y}
-        self[i][j].element.y = 0
-        transition.to( self[i][j].element, { time = counter, y = placeToGo, transition=easing.outQuint  } )
-        counter = counter + counter
-    end
-  end
-end
-
-function Board:MoveOffScreen(height)
-  local counter = 5
-  local oldPlace = {}
-  for i = 1, #self do
-    for j = 1 , #self[i] do
-        oldPlace[i] = {x = 0, y = 0}
-        oldPlace[i].x = self[i][j].x
-        oldPlace[i].y = self[i][j].y
-        local placeToGo = height
-        self[i][j].element.y = 0
-        transition.to( self[i][j].element, { time = counter, y = placeToGo, transition=easing.outQuint  } )
-        counter = counter + counter
-    end
-  end
-  print(table.getn(oldPlace))
-  print(table.getn(oldPlace[0]))
-
-  return oldPlace
 end
 
 return Board

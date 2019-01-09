@@ -69,7 +69,7 @@ function ItemInterface:DrawTheLine(group, elements)
     lineForWin.strokeWidth = 2
     table.insert(self, lineForWin)
   else
-    error("Error, the are no elements at all!")
+    error("Error: doesn't have elements at all!")
   end
 end
 

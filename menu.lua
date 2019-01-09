@@ -50,7 +50,7 @@ function scene:create( event )
     end
     sceneGroup:addEventListener("tap", gotoPlayMode)
 
-    creatorText = display.newText(sceneGroup, "Made by Alexander Verbin",
+    creatorText = display.newText(sceneGroup, "Made by ArticSnake",
       display.contentCenterX,
       display.contentHeight - 10, native.systemFont, 12)
     creatorText:setFillColor(255, 239, 0)
