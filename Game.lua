@@ -29,6 +29,7 @@ local drawSound = nil
 local menuButton = nil
 local soundOn = nil
 local soundOff = nil
+local computerImage = nil
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -53,6 +54,13 @@ local function SetElementToBoard(boardElement)
   end
 end
 
+local function Clean()
+  itemsInterface:RemoveAllItems()
+  Board:CleanBoard()
+  gameData.run = true
+  textTurn.text = "Turn: "  .. gameData.turn
+end
+
 local function SetUpTexts()
   firstPlayerText.text = "Player1 (" .. gameData.firstPlayer .. "): " .. tostring(firstPlayerCounter)
   local whoPlayText = ""
@@ -62,6 +70,18 @@ local function SetUpTexts()
     whoPlayText = "Player2 ("
   end
   secondPlayerText.text = whoPlayText .. gameData.secondPlayer .. "): " .. tostring(secondPlayerCounter)
+end
+
+local function SwapImage(oldImage, pathToImage)
+  if oldImage ~= nil then
+    local currentImage = display.newImageRect(
+      oldImage.parent,
+      pathToImage, oldImage.width, oldImage.height)
+      currentImage.x = oldImage.x
+      currentImage.y = oldImage.y
+      oldImage:removeSelf()
+      return currentImage
+  end
 end
 
 local function SetupCounter(boardElement)
@@ -76,6 +96,18 @@ local function SetupCounter(boardElement)
     secondPlayerCounter = 0
   end
 
+  if gameData.isSingle then
+     if (firstPlayerCounter - secondPlayerCounter) <= 5 then
+       basicAI.difficulty = "easy"
+       computerImage = SwapImage(computerImage, "res/img/easy.png")
+     elseif (firstPlayerCounter - secondPlayerCounter) <= 10 then
+       basicAI.difficulty = "normal"
+       computerImage = SwapImage(computerImage, "res/img/normal.png")
+     else
+       basicAI.difficulty = "hard"
+       computerImage = SwapImage(computerImage, "res/img/hard.png")
+     end
+  end
   SetUpTexts()
 end
 
@@ -122,16 +154,14 @@ local function CheckAllMarksOnBoard()
 end
 
 local function RetryTapEvent( event )
-  itemsInterface:RemoveAllItems()
-  Board:CleanBoard()
-  gameData.run = true
-  textTurn.text = "Turn: "  .. gameData.turn
+  Clean()
 end
 
 local function tapEvent( event )
   if gameData.isSingle and gameData.run == false then
     print("error: game doesn't run!")
-    gameData.run = true
+    return false
+    --gameData.run = true
   end
 
   if gameData.isSingle and gameData.firstPlayer ~= gameData.turn then
@@ -150,17 +180,6 @@ local function tapEvent( event )
   return true
 end
 
-local function SwapImage(oldImage, pathToImage)
-  if oldImage ~= nil then
-    local currentImage = display.newImageRect(
-      oldImage.parent,
-      pathToImage, oldImage.width, oldImage.height)
-      currentImage.x = oldImage.x
-      currentImage.y = oldImage.y
-      oldImage:removeSelf()
-      return currentImage
-  end
-end
 
 local function TurnOnOffSound()
   if gameData.turnOnSound then
@@ -246,6 +265,20 @@ function scene:create( event )
     "",
     display.contentWidth - 70, textTurn.y, native.systemFont, 12)
     secondPlayerText:setFillColor(255, 239, 0)
+
+    if gameData.isSingle then
+      local computerImagePath = nil
+      if basicAI.difficulty == "easy" then
+        computerImagePath = "res/img/easy.png"
+      elseif basicAI.difficulty == "normal" then
+        computerImagePath = "res/img/normal.png"
+      else
+        computerImagePath = "res/img/hard.png"
+      end
+      computerImage = display.newImageRect( sceneGroup, "res/img/easy.png", 30, 30)
+      computerImage.x = soundOff.x
+      computerImage.y = secondPlayerText.y - computerImage.height + 5
+    end
     SetUpTexts()
 
     linesSound = audio.loadSound("res/audio/lines_sound(pencil).mp3")
